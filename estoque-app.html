@@ -355,6 +355,10 @@ tbody tr:hover{background:var(--azul-claro)}
 </div>
 <div class="section">
 <div class="section-title">Estoque Mínimo</div>
+<div style="display:flex;gap:8px;margin-bottom:12px;align-items:center;flex-wrap:wrap">
+<input type="text" id="cfgMinBusca" oninput="renderConfig()" placeholder="Buscar por código, descrição ou fabricante..." style="flex:1;min-width:200px;padding:7px 10px;border:1px solid var(--borda);border-radius:4px;font-family:inherit;font-size:12px">
+<button class="btn btn-azul" onclick="saveMinimums()">Salvar Mínimos</button>
+</div>
 <table id="cfgMinTable"><thead><tr><th>Código</th><th>Descrição</th><th>Fabricante</th><th class="text-center">Qtde</th><th class="text-center" style="width:80px">Mínimo</th></tr></thead><tbody></tbody></table>
 <div style="margin-top:12px"><button class="btn btn-azul" onclick="saveMinimums()">Salvar Mínimos</button></div>
 </div>
@@ -650,7 +654,23 @@ async function loadData() {
 // ===== UTILIDADES =====
 function norm(s) { return (s||'').toString().normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase(); }
 function esc(s) { return (s||'').toString().replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
-function formatDate(d) { if(!d)return'--'; const p=d.split(/[-T ]/); return p.length>=3?p[2]+'/'+p[1]+'/'+p[0]+(p[3]?' '+p[3]:''):'--'; }
+function formatDate(d) {
+  if(!d)return'--';
+  // If it contains timezone info (+00:00 or Z), convert to local time
+  if (d.includes('+') || d.includes('Z') || d.includes('T')) {
+    const dt = new Date(d);
+    if (isNaN(dt)) return '--';
+    const dd = String(dt.getDate()).padStart(2,'0');
+    const mm = String(dt.getMonth()+1).padStart(2,'0');
+    const yy = dt.getFullYear();
+    const hh = String(dt.getHours()).padStart(2,'0');
+    const mi = String(dt.getMinutes()).padStart(2,'0');
+    const ss = String(dt.getSeconds()).padStart(2,'0');
+    return dd+'/'+mm+'/'+yy+' '+hh+':'+mi+':'+ss;
+  }
+  // Simple date string (YYYY-MM-DD HH:MM)
+  const p=d.split(/[-T ]/); return p.length>=3?p[2]+'/'+p[1]+'/'+p[0]+(p[3]?' '+p[3]:''):'--';
+}
 function now() { const d=new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')+' '+String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0'); }
 function toast(msg, tipo) {
   const c = document.getElementById('toast-container');
@@ -1052,7 +1072,7 @@ function renderHistory() {
   const os = norm(document.getElementById('hisOS').value);
 
   let filtered = HISTORICO.slice().reverse().filter(h => {
-    if (busca && !norm(h.codigo+h.descricao+(h.responsavel||'')+(h.observacao||'')).includes(busca)) return false;
+    if (busca && !norm(h.codigo+h.descricao+(h.responsavel||'')+(h.observacao||'')+(h.destino||'')+(h.numeroOS||'')+h.tipo+h.quantidade).includes(busca)) return false;
     if (tipo && h.tipo !== tipo) return false;
     if (resp && h.responsavel !== resp) return false;
     if (os && !norm(h.numeroOS||'').includes(os)) return false;
@@ -1072,8 +1092,10 @@ function renderHistory() {
 
 // ===== CONFIGURAÇÕES =====
 function renderConfig() {
+  const busca = norm(document.getElementById('cfgMinBusca')?.value || '');
+  const filtered = busca ? ESTOQUE.filter(x => norm(x.codigo+x.descricao+x.fabricante).includes(busca)) : ESTOQUE;
   const tbody = document.querySelector('#cfgMinTable tbody');
-  tbody.innerHTML = ESTOQUE.map(x =>
+  tbody.innerHTML = filtered.map(x =>
     '<tr><td><code>'+esc(x.codigo)+'</code></td><td>'+esc(x.descricao)+'</td><td>'+esc(x.fabricante)+'</td><td class="text-center">'+x.quantidade+'</td>'+
     '<td class="text-center"><input type="number" min="0" value="'+x.estoqueMinimo+'" data-id="'+x.id+'" style="width:60px;text-align:center;padding:4px;border:1px solid var(--borda);border-radius:3px"></td></tr>'
   ).join('');
