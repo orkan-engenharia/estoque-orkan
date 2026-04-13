@@ -2,17 +2,17 @@
 <html lang="pt-BR"><head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Estoque - Orkan Automação</title>
+<title>Estoque Engenharia - Orkan Automação</title>
 <!-- PWA - App Mode -->
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Estoque Orkan">
+<meta name="apple-mobile-web-app-title" content="Estoque Engenharia">
 <meta name="theme-color" content="#003399">
 <meta name="msapplication-TileColor" content="#003399">
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHdpZHRoPScxOTInIGhlaWdodD0nMTkyJyB2aWV3Qm94PScwIDAgMTkyIDE5Mic+CjxyZWN0IHdpZHRoPScxOTInIGhlaWdodD0nMTkyJyByeD0nMzInIGZpbGw9JyMwMDMzOTknLz4KPHJlY3QgeD0nMTInIHk9JzEyJyB3aWR0aD0nMTY4JyBoZWlnaHQ9JzE2OCcgcng9JzI0JyBmaWxsPSd1cmwoI2cpJyBzdHJva2U9J3JnYmEoMjU1LDI1NSwyNTUsMC4xNSknIHN0cm9rZS13aWR0aD0nMicvPgo8ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9J2cnIHgxPScwJyB5MT0nMCcgeDI9JzEnIHkyPScxJz48c3RvcCBvZmZzZXQ9JzAlMjUnIHN0b3AtY29sb3I9JyMwMDMzOTknLz48c3RvcCBvZmZzZXQ9JzEwMCUyNScgc3RvcC1jb2xvcj0nIzAwNmVlZScvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPgo8dGV4dCB4PSc5NicgeT0nODAnIHRleHQtYW5jaG9yPSdtaWRkbGUnIGZvbnQtZmFtaWx5PSdBcmlhbCxzYW5zLXNlcmlmJyBmb250LXNpemU9JzI4JyBmb250LXdlaWdodD0nYm9sZCcgZmlsbD0nd2hpdGUnIGxldHRlci1zcGFjaW5nPSczJz5PUktBTjwvdGV4dD4KPHJlY3QgeD0nMzYnIHk9Jzk1JyB3aWR0aD0nMTIwJyBoZWlnaHQ9JzInIGZpbGw9JyM3QUMxNDMnIHJ4PScxJy8+Cjx0ZXh0IHg9Jzk2JyB5PScxMjUnIHRleHQtYW5jaG9yPSdtaWRkbGUnIGZvbnQtZmFtaWx5PSdBcmlhbCxzYW5zLXNlcmlmJyBmb250LXNpemU9JzE2JyBmb250LXdlaWdodD0nNjAwJyBmaWxsPSdyZ2JhKDI1NSwyNTUsMjU1LDAuOSknPkVTVE9RVUU8L3RleHQ+CjxyZWN0IHg9JzU2JyB5PScxNDAnIHdpZHRoPSc4MCcgaGVpZ2h0PScyNCcgcng9JzQnIGZpbGw9JyM3QUMxNDMnLz4KPHJlY3QgeD0nNjInIHk9JzE0Nicgd2lkdGg9JzEyJyBoZWlnaHQ9JzEyJyByeD0nMicgZmlsbD0nd2hpdGUnIG9wYWNpdHk9JzAuOScvPgo8cmVjdCB4PSc3OCcgeT0nMTQ2JyB3aWR0aD0nMTInIGhlaWdodD0nMTInIHJ4PScyJyBmaWxsPSd3aGl0ZScgb3BhY2l0eT0nMC43Jy8+CjxyZWN0IHg9Jzk0JyB5PScxNDYnIHdpZHRoPScxMicgaGVpZ2h0PScxMicgcng9JzInIGZpbGw9J3doaXRlJyBvcGFjaXR5PScwLjUnLz4KPHJlY3QgeD0nMTEwJyB5PScxNDYnIHdpZHRoPScxMicgaGVpZ2h0PScxMicgcng9JzInIGZpbGw9J3doaXRlJyBvcGFjaXR5PScwLjMnLz4KPC9zdmc+">
 <link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHdpZHRoPScxOTInIGhlaWdodD0nMTkyJyB2aWV3Qm94PScwIDAgMTkyIDE5Mic+CjxyZWN0IHdpZHRoPScxOTInIGhlaWdodD0nMTkyJyByeD0nMzInIGZpbGw9JyMwMDMzOTknLz4KPHJlY3QgeD0nMTInIHk9JzEyJyB3aWR0aD0nMTY4JyBoZWlnaHQ9JzE2OCcgcng9JzI0JyBmaWxsPSd1cmwoI2cpJyBzdHJva2U9J3JnYmEoMjU1LDI1NSwyNTUsMC4xNSknIHN0cm9rZS13aWR0aD0nMicvPgo8ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9J2cnIHgxPScwJyB5MT0nMCcgeDI9JzEnIHkyPScxJz48c3RvcCBvZmZzZXQ9JzAlMjUnIHN0b3AtY29sb3I9JyMwMDMzOTknLz48c3RvcCBvZmZzZXQ9JzEwMCUyNScgc3RvcC1jb2xvcj0nIzAwNmVlZScvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPgo8dGV4dCB4PSc5NicgeT0nODAnIHRleHQtYW5jaG9yPSdtaWRkbGUnIGZvbnQtZmFtaWx5PSdBcmlhbCxzYW5zLXNlcmlmJyBmb250LXNpemU9JzI4JyBmb250LXdlaWdodD0nYm9sZCcgZmlsbD0nd2hpdGUnIGxldHRlci1zcGFjaW5nPSczJz5PUktBTjwvdGV4dD4KPHJlY3QgeD0nMzYnIHk9Jzk1JyB3aWR0aD0nMTIwJyBoZWlnaHQ9JzInIGZpbGw9JyM3QUMxNDMnIHJ4PScxJy8+Cjx0ZXh0IHg9Jzk2JyB5PScxMjUnIHRleHQtYW5jaG9yPSdtaWRkbGUnIGZvbnQtZmFtaWx5PSdBcmlhbCxzYW5zLXNlcmlmJyBmb250LXNpemU9JzE2JyBmb250LXdlaWdodD0nNjAwJyBmaWxsPSdyZ2JhKDI1NSwyNTUsMjU1LDAuOSknPkVTVE9RVUU8L3RleHQ+CjxyZWN0IHg9JzU2JyB5PScxNDAnIHdpZHRoPSc4MCcgaGVpZ2h0PScyNCcgcng9JzQnIGZpbGw9JyM3QUMxNDMnLz4KPHJlY3QgeD0nNjInIHk9JzE0Nicgd2lkdGg9JzEyJyBoZWlnaHQ9JzEyJyByeD0nMicgZmlsbD0nd2hpdGUnIG9wYWNpdHk9JzAuOScvPgo8cmVjdCB4PSc3OCcgeT0nMTQ2JyB3aWR0aD0nMTInIGhlaWdodD0nMTInIHJ4PScyJyBmaWxsPSd3aGl0ZScgb3BhY2l0eT0nMC43Jy8+CjxyZWN0IHg9Jzk0JyB5PScxNDYnIHdpZHRoPScxMicgaGVpZ2h0PScxMicgcng9JzInIGZpbGw9J3doaXRlJyBvcGFjaXR5PScwLjUnLz4KPHJlY3QgeD0nMTEwJyB5PScxNDYnIHdpZHRoPScxMicgaGVpZ2h0PScxMicgcng9JzInIGZpbGw9J3doaXRlJyBvcGFjaXR5PScwLjMnLz4KPC9zdmc+">
-<link rel="manifest" href="data:application/manifest+json,%7B%22name%22%3A%22Estoque%20Orkan%22%2C%22short_name%22%3A%22Estoque%22%2C%22description%22%3A%22Gest%C3%A3o%20de%20Estoque%20-%20Orkan%20Automa%C3%A7%C3%A3o%20Industrial%22%2C%22start_url%22%3A%22%2Festoque-app.html%22%2C%22display%22%3A%22fullscreen%22%2C%22orientation%22%3A%22any%22%2C%22background_color%22%3A%22%23003399%22%2C%22theme_color%22%3A%22%23003399%22%2C%22icons%22%3A%5B%7B%22src%22%3A%22data%3Aimage%2Fsvg%2Bxml%3Bbase64%2CPHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHdpZHRoPScxOTInIGhlaWdodD0nMTkyJyB2aWV3Qm94PScwIDAgMTkyIDE5Mic%2BCjxyZWN0IHdpZHRoPScxOTInIGhlaWdodD0nMTkyJyByeD0nMzInIGZpbGw9JyMwMDMzOTknLz4KPHJlY3QgeD0nMTInIHk9JzEyJyB3aWR0aD0nMTY4JyBoZWlnaHQ9JzE2OCcgcng9JzI0JyBmaWxsPSd1cmwoI2cpJyBzdHJva2U9J3JnYmEoMjU1LDI1NSwyNTUsMC4xNSknIHN0cm9rZS13aWR0aD0nMicvPgo8ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9J2cnIHgxPScwJyB5MT0nMCcgeDI9JzEnIHkyPScxJz48c3RvcCBvZmZzZXQ9JzAlMjUnIHN0b3AtY29sb3I9JyMwMDMzOTknLz48c3RvcCBvZmZzZXQ9JzEwMCUyNScgc3RvcC1jb2xvcj0nIzAwNmVlZScvPjwvbGluZWFyR3JhZGllbnQ%2BPC9kZWZzPgo8dGV4dCB4PSc5NicgeT0nODAnIHRleHQtYW5jaG9yPSdtaWRkbGUnIGZvbnQtZmFtaWx5PSdBcmlhbCxzYW5zLXNlcmlmJyBmb250LXNpemU9JzI4JyBmb250LXdlaWdodD0nYm9sZCcgZmlsbD0nd2hpdGUnIGxldHRlci1zcGFjaW5nPSczJz5PUktBTjwvdGV4dD4KPHJlY3QgeD0nMzYnIHk9Jzk1JyB3aWR0aD0nMTIwJyBoZWlnaHQ9JzInIGZpbGw9JyM3QUMxNDMnIHJ4PScxJy8%2BCjx0ZXh0IHg9Jzk2JyB5PScxMjUnIHRleHQtYW5jaG9yPSdtaWRkbGUnIGZvbnQtZmFtaWx5PSdBcmlhbCxzYW5zLXNlcmlmJyBmb250LXNpemU9JzE2JyBmb250LXdlaWdodD0nNjAwJyBmaWxsPSdyZ2JhKDI1NSwyNTUsMjU1LDAuOSknPkVTVE9RVUU8L3RleHQ%2BCjxyZWN0IHg9JzU2JyB5PScxNDAnIHdpZHRoPSc4MCcgaGVpZ2h0PScyNCcgcng9JzQnIGZpbGw9JyM3QUMxNDMnLz4KPHJlY3QgeD0nNjInIHk9JzE0Nicgd2lkdGg9JzEyJyBoZWlnaHQ9JzEyJyByeD0nMicgZmlsbD0nd2hpdGUnIG9wYWNpdHk9JzAuOScvPgo8cmVjdCB4PSc3OCcgeT0nMTQ2JyB3aWR0aD0nMTInIGhlaWdodD0nMTInIHJ4PScyJyBmaWxsPSd3aGl0ZScgb3BhY2l0eT0nMC43Jy8%2BCjxyZWN0IHg9Jzk0JyB5PScxNDYnIHdpZHRoPScxMicgaGVpZ2h0PScxMicgcng9JzInIGZpbGw9J3doaXRlJyBvcGFjaXR5PScwLjUnLz4KPHJlY3QgeD0nMTEwJyB5PScxNDYnIHdpZHRoPScxMicgaGVpZ2h0PScxMicgcng9JzInIGZpbGw9J3doaXRlJyBvcGFjaXR5PScwLjMnLz4KPC9zdmc%2B%22%2C%22sizes%22%3A%22192x192%22%2C%22type%22%3A%22image%2Fsvg%2Bxml%22%2C%22purpose%22%3A%22any%20maskable%22%7D%5D%7D">
+<link rel="manifest" href="data:application/manifest+json,%7B%22name%22%3A%22Estoque%20Engenharia%22%2C%22short_name%22%3A%22Estoque%22%2C%22description%22%3A%22Gest%C3%A3o%20de%20Estoque%20-%20Orkan%20Automa%C3%A7%C3%A3o%20Industrial%22%2C%22start_url%22%3A%22%2Festoque-app.html%22%2C%22display%22%3A%22fullscreen%22%2C%22orientation%22%3A%22any%22%2C%22background_color%22%3A%22%23003399%22%2C%22theme_color%22%3A%22%23003399%22%2C%22icons%22%3A%5B%7B%22src%22%3A%22data%3Aimage%2Fsvg%2Bxml%3Bbase64%2CPHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHdpZHRoPScxOTInIGhlaWdodD0nMTkyJyB2aWV3Qm94PScwIDAgMTkyIDE5Mic%2BCjxyZWN0IHdpZHRoPScxOTInIGhlaWdodD0nMTkyJyByeD0nMzInIGZpbGw9JyMwMDMzOTknLz4KPHJlY3QgeD0nMTInIHk9JzEyJyB3aWR0aD0nMTY4JyBoZWlnaHQ9JzE2OCcgcng9JzI0JyBmaWxsPSd1cmwoI2cpJyBzdHJva2U9J3JnYmEoMjU1LDI1NSwyNTUsMC4xNSknIHN0cm9rZS13aWR0aD0nMicvPgo8ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9J2cnIHgxPScwJyB5MT0nMCcgeDI9JzEnIHkyPScxJz48c3RvcCBvZmZzZXQ9JzAlMjUnIHN0b3AtY29sb3I9JyMwMDMzOTknLz48c3RvcCBvZmZzZXQ9JzEwMCUyNScgc3RvcC1jb2xvcj0nIzAwNmVlZScvPjwvbGluZWFyR3JhZGllbnQ%2BPC9kZWZzPgo8dGV4dCB4PSc5NicgeT0nODAnIHRleHQtYW5jaG9yPSdtaWRkbGUnIGZvbnQtZmFtaWx5PSdBcmlhbCxzYW5zLXNlcmlmJyBmb250LXNpemU9JzI4JyBmb250LXdlaWdodD0nYm9sZCcgZmlsbD0nd2hpdGUnIGxldHRlci1zcGFjaW5nPSczJz5PUktBTjwvdGV4dD4KPHJlY3QgeD0nMzYnIHk9Jzk1JyB3aWR0aD0nMTIwJyBoZWlnaHQ9JzInIGZpbGw9JyM3QUMxNDMnIHJ4PScxJy8%2BCjx0ZXh0IHg9Jzk2JyB5PScxMjUnIHRleHQtYW5jaG9yPSdtaWRkbGUnIGZvbnQtZmFtaWx5PSdBcmlhbCxzYW5zLXNlcmlmJyBmb250LXNpemU9JzE2JyBmb250LXdlaWdodD0nNjAwJyBmaWxsPSdyZ2JhKDI1NSwyNTUsMjU1LDAuOSknPkVTVE9RVUU8L3RleHQ%2BCjxyZWN0IHg9JzU2JyB5PScxNDAnIHdpZHRoPSc4MCcgaGVpZ2h0PScyNCcgcng9JzQnIGZpbGw9JyM3QUMxNDMnLz4KPHJlY3QgeD0nNjInIHk9JzE0Nicgd2lkdGg9JzEyJyBoZWlnaHQ9JzEyJyByeD0nMicgZmlsbD0nd2hpdGUnIG9wYWNpdHk9JzAuOScvPgo8cmVjdCB4PSc3OCcgeT0nMTQ2JyB3aWR0aD0nMTInIGhlaWdodD0nMTInIHJ4PScyJyBmaWxsPSd3aGl0ZScgb3BhY2l0eT0nMC43Jy8%2BCjxyZWN0IHg9Jzk0JyB5PScxNDYnIHdpZHRoPScxMicgaGVpZ2h0PScxMicgcng9JzInIGZpbGw9J3doaXRlJyBvcGFjaXR5PScwLjUnLz4KPHJlY3QgeD0nMTEwJyB5PScxNDYnIHdpZHRoPScxMicgaGVpZ2h0PScxMicgcng9JzInIGZpbGw9J3doaXRlJyBvcGFjaXR5PScwLjMnLz4KPC9zdmc%2B%22%2C%22sizes%22%3A%22192x192%22%2C%22type%22%3A%22image%2Fsvg%2Bxml%22%2C%22purpose%22%3A%22any%20maskable%22%7D%5D%7D">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
 <style>
@@ -164,6 +164,7 @@ tbody tr:hover{background:var(--azul-claro)}
 #onlineDot{width:8px;height:8px;border-radius:50%;background:var(--laranja);display:inline-block;margin-left:auto}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 </head>
 <body>
 
@@ -172,7 +173,7 @@ tbody tr:hover{background:var(--azul-claro)}
 <div class="login-box">
 <div class="login-header">
 <svg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 192 192'><rect width='192' height='192' rx='32' fill='#003399'/><text x='96' y='80' text-anchor='middle' font-family='Arial,sans-serif' font-size='28' font-weight='bold' fill='white' letter-spacing='3'>ORKAN</text><rect x='36' y='95' width='120' height='2' fill='#7AC143' rx='1'/><text x='96' y='125' text-anchor='middle' font-family='Arial,sans-serif' font-size='16' font-weight='600' fill='rgba(255,255,255,0.9)'>ESTOQUE</text></svg>
-<h1>Estoque Orkan</h1>
+<h1>Estoque Engenharia</h1>
 <p>Gestão de Estoque - Engenharia</p>
 </div>
 <div class="login-tabs">
@@ -188,7 +189,7 @@ tbody tr:hover{background:var(--azul-claro)}
 <form id="formCadastro" class="login-form" style="display:none" onsubmit="fazerCadastro(event)">
 <div id="cadErro" class="login-erro"></div>
 <div id="cadSucesso" class="login-sucesso"></div>
-<div class="form-group"><label>Nome</label><input type="text" id="cadNome" placeholder="Seu nome completo" required></div>
+<div class="form-group"><label>Nome</label><input type="text" id="cadNome" placeholder="Seu nome" required></div>
 <div class="form-group"><label>Email</label><input type="email" id="cadEmail" placeholder="seu.nome@orkan.com.br" required></div>
 <div class="form-group"><label>Senha</label><input type="password" id="cadSenha" placeholder="Mínimo 6 caracteres" required></div>
 <div class="form-group"><label>Confirmar senha</label><input type="password" id="cadConfirmar" placeholder="Repita a senha" required></div>
@@ -286,7 +287,6 @@ tbody tr:hover{background:var(--azul-claro)}
 <div class="item-selected" id="movSelected" style="display:none"></div>
 <div class="form-row">
 <div class="form-group" style="max-width:120px"><label>Quantidade *</label><input type="number" id="movQtd" min="1" value="1"></div>
-<div class="form-group"><label>Responsável *</label><select id="movResp"><option value="">Selecione...</option><option value="Anderson">Anderson</option><option value="Everton">Everton</option><option value="Felipe">Felipe</option><option value="Felipe Vaccas">Felipe Vaccas</option><option value="Gilberto Vaccas">Gilberto Vaccas</option><option value="Helena">Helena</option><option value="Junior">Junior</option><option value="Robson">Robson</option><option value="Sandro">Sandro</option></select></div>
 </div>
 <div class="form-row">
 <div class="form-group"><label>Destino *</label><select id="movDestino" onchange="checkOS()"><option value="Compra para estoque">Compra para estoque</option><option value="Devolução de projeto">Devolução de projeto</option><option value="Devolução de empréstimo">Devolução de empréstimo</option><option value="Transferência">Transferência</option></select></div>
@@ -318,7 +318,6 @@ tbody tr:hover{background:var(--azul-claro)}
 <div class="form-row">
 <div class="form-group" style="max-width:120px"><label>Caixa / Local *</label><input type="text" id="nvCaixa" list="dlCaixa"></div>
 <div class="form-group" style="max-width:140px"><label>Estoque mínimo</label><input type="number" id="nvMinimo" min="0" value="0"></div>
-<div class="form-group"><label>Responsável *</label><select id="nvResp"><option value="">Selecione...</option><option value="Anderson">Anderson</option><option value="Everton">Everton</option><option value="Felipe">Felipe</option><option value="Felipe Vaccas">Felipe Vaccas</option><option value="Gilberto Vaccas">Gilberto Vaccas</option><option value="Helena">Helena</option><option value="Junior">Junior</option><option value="Robson">Robson</option><option value="Sandro">Sandro</option></select></div>
 </div>
 <div class="form-group"><label>Observação</label><input type="text" id="nvObs"></div>
 <div style="margin-top:16px"><button class="btn btn-azul" id="btnAddItem" onclick="adicionarItem()">Adicionar Item e Salvar</button></div>
@@ -347,17 +346,8 @@ tbody tr:hover{background:var(--azul-claro)}
 <div style="display:flex;gap:8px;flex-wrap:wrap">
 <button class="btn btn-azul" onclick="exportarJSON()">Exportar Backup JSON</button>
 <button class="btn btn-azul" onclick="exportarCSV()">Exportar CSV</button>
-<button class="btn btn-outline" onclick="document.getElementById('importFile').click()">Importar Backup JSON</button>
-<input type="file" id="importFile" accept=".json" style="display:none" onchange="importarJSON(event)">
+<button class="btn btn-azul" onclick="exportarExcel()">Exportar Excel</button>
 </div>
-</div>
-<div class="section">
-<div class="section-title">Responsáveis</div>
-<div style="display:flex;gap:8px;margin-bottom:12px">
-<input type="text" id="cfgNovoResp" placeholder="Nome do responsável" style="flex:1;padding:8px 10px;border:1px solid var(--borda);border-radius:4px;font-family:inherit;font-size:13px">
-<button class="btn btn-azul" onclick="adicionarResponsavel()">Adicionar</button>
-</div>
-<div id="cfgRespLista" style="display:flex;flex-wrap:wrap;gap:6px"><span style="display:inline-flex;align-items:center;gap:4px;background:var(--azul-claro);padding:4px 10px;border-radius:4px;font-size:12px">Anderson<button onclick="removerResponsavel('Anderson')" style="background:none;border:none;color:var(--vermelho);cursor:pointer;font-size:14px;font-weight:bold;padding:0 2px">×</button></span><span style="display:inline-flex;align-items:center;gap:4px;background:var(--azul-claro);padding:4px 10px;border-radius:4px;font-size:12px">Everton<button onclick="removerResponsavel('Everton')" style="background:none;border:none;color:var(--vermelho);cursor:pointer;font-size:14px;font-weight:bold;padding:0 2px">×</button></span><span style="display:inline-flex;align-items:center;gap:4px;background:var(--azul-claro);padding:4px 10px;border-radius:4px;font-size:12px">Felipe<button onclick="removerResponsavel('Felipe')" style="background:none;border:none;color:var(--vermelho);cursor:pointer;font-size:14px;font-weight:bold;padding:0 2px">×</button></span><span style="display:inline-flex;align-items:center;gap:4px;background:var(--azul-claro);padding:4px 10px;border-radius:4px;font-size:12px">Felipe Vaccas<button onclick="removerResponsavel('Felipe Vaccas')" style="background:none;border:none;color:var(--vermelho);cursor:pointer;font-size:14px;font-weight:bold;padding:0 2px">×</button></span><span style="display:inline-flex;align-items:center;gap:4px;background:var(--azul-claro);padding:4px 10px;border-radius:4px;font-size:12px">Gilberto Vaccas<button onclick="removerResponsavel('Gilberto Vaccas')" style="background:none;border:none;color:var(--vermelho);cursor:pointer;font-size:14px;font-weight:bold;padding:0 2px">×</button></span><span style="display:inline-flex;align-items:center;gap:4px;background:var(--azul-claro);padding:4px 10px;border-radius:4px;font-size:12px">Helena<button onclick="removerResponsavel('Helena')" style="background:none;border:none;color:var(--vermelho);cursor:pointer;font-size:14px;font-weight:bold;padding:0 2px">×</button></span><span style="display:inline-flex;align-items:center;gap:4px;background:var(--azul-claro);padding:4px 10px;border-radius:4px;font-size:12px">Junior<button onclick="removerResponsavel('Junior')" style="background:none;border:none;color:var(--vermelho);cursor:pointer;font-size:14px;font-weight:bold;padding:0 2px">×</button></span><span style="display:inline-flex;align-items:center;gap:4px;background:var(--azul-claro);padding:4px 10px;border-radius:4px;font-size:12px">Robson<button onclick="removerResponsavel('Robson')" style="background:none;border:none;color:var(--vermelho);cursor:pointer;font-size:14px;font-weight:bold;padding:0 2px">×</button></span><span style="display:inline-flex;align-items:center;gap:4px;background:var(--azul-claro);padding:4px 10px;border-radius:4px;font-size:12px">Sandro<button onclick="removerResponsavel('Sandro')" style="background:none;border:none;color:var(--vermelho);cursor:pointer;font-size:14px;font-weight:bold;padding:0 2px">×</button></span></div>
 </div>
 <div class="section">
 <div class="section-title">Estoque Mínimo</div>
@@ -390,14 +380,13 @@ tbody tr:hover{background:var(--azul-claro)}
 </div>
 
 <div id="toast-container"></div>
-<datalist id="dlResp"></datalist>
 <datalist id="dlFab"><option value="BHS"></option><option value="CARLO GAVAZZI"></option><option value="EATON"></option><option value="FINDER"></option><option value="HellermannTyton"></option><option value="ICOTEK"></option><option value="OMRON"></option><option value="PHOENIX CONTACT"></option><option value="SCHNEIDER"></option><option value="SICK"></option><option value="SIEMENS"></option><option value="VIPA"></option><option value="WAGO"></option><option value="WEIDMULLER"></option><option value="WOHNER"></option></datalist>
 <datalist id="dlProd"><option value="Acessório"></option><option value="Adaptador"></option><option value="Barramento"></option><option value="Base"></option><option value="Bloco"></option><option value="Borne"></option><option value="Botão"></option><option value="CPU"></option><option value="Cabo"></option><option value="Caixa"></option><option value="Chave"></option><option value="Conector"></option><option value="Contator"></option><option value="Disjuntor"></option><option value="Filtro"></option><option value="Fita"></option><option value="Fixador"></option><option value="Fixação"></option><option value="Fonte"></option><option value="Fusível"></option><option value="Garra de aterramento"></option><option value="Identificador"></option><option value="Leitor"></option><option value="Módulo"></option><option value="Pente"></option><option value="Placa terminal"></option><option value="Poste"></option><option value="Proteção contra surtos"></option><option value="Relé"></option><option value="Sensor"></option><option value="Tampa"></option><option value="Tampão"></option><option value="Temporizador"></option><option value="Terminal"></option><option value="Termostato"></option><option value="Ventilador"></option></datalist>
 <datalist id="dlCaixa"><option value="01"></option><option value="02"></option><option value="03"></option><option value="04"></option><option value="05"></option><option value="06"></option><option value="07"></option><option value="08"></option><option value="09"></option><option value="10"></option><option value="11"></option><option value="12"></option><option value="13"></option><option value="14"></option><option value="15"></option><option value="16"></option><option value="17"></option><option value="18"></option><option value="19"></option><option value="20"></option><option value="21"></option></datalist>
 
 <footer class="app-footer">
 <span id="footerSync">Última sincronização: --</span>
-<span>Estoque Orkan v2.0 — Supabase</span>
+<span>Estoque Engenharia v2.0 — Supabase</span>
 </footer>
 
 </div><!-- /appContent -->
@@ -411,7 +400,6 @@ const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 // ===== DADOS DE TRABALHO =====
 let ESTOQUE = [];
 let HISTORICO = [];
-let RESPONSAVEIS = [];
 let movItemId = null;
 let movTipo = 'entrada';
 let sortCol = 'id';
@@ -502,6 +490,10 @@ async function fazerCadastro(e) {
   }
   sucDiv.textContent = 'Cadastro realizado! Verifique seu email para confirmar a conta.';
   sucDiv.style.display = 'block';
+  document.getElementById('cadNome').value = '';
+  document.getElementById('cadEmail').value = '';
+  document.getElementById('cadSenha').value = '';
+  document.getElementById('cadConfirmar').value = '';
 }
 
 async function fazerLogout() {
@@ -594,14 +586,6 @@ function iniciarRealtime() {
         renderHistorico();
       }
     })
-    .on('postgres_changes', { event: '*', schema: 'public', table: 'responsaveis' }, async () => {
-      const { data } = await sb.from('responsaveis').select('nome').eq('ativo', true).order('nome');
-      if (data) {
-        RESPONSAVEIS = data.map(r => r.nome);
-        salvarLocalStorage();
-        atualizarDatalistas();
-      }
-    })
     .subscribe((status) => {
       const dot = document.getElementById('onlineDot');
       if (!dot) return;
@@ -618,14 +602,12 @@ function iniciarRealtime() {
 // ===== PERSISTÊNCIA =====
 const SK_E = 'orkan_estoque_v1';
 const SK_H = 'orkan_historico_v1';
-const SK_R = 'orkan_responsaveis_v1';
 const SK_S = 'orkan_ultima_sync';
 
 function salvarLocalStorage() {
   try {
     localStorage.setItem(SK_E, JSON.stringify(ESTOQUE));
     localStorage.setItem(SK_H, JSON.stringify(HISTORICO));
-    localStorage.setItem(SK_R, JSON.stringify(RESPONSAVEIS));
     localStorage.setItem(SK_S, new Date().toISOString());
   } catch(e) { /* cache only */ }
   atualizarFooter();
@@ -641,10 +623,6 @@ async function carregarDados() {
     if (errH) throw errH;
     HISTORICO = hRows.map(historicoToCamel);
 
-    const { data: rRows, error: errR } = await sb.from('responsaveis').select('nome').eq('ativo', true).order('nome');
-    if (errR) throw errR;
-    RESPONSAVEIS = rRows.map(r => r.nome);
-
     salvarLocalStorage();
   } catch (error) {
     console.error('Erro ao carregar dados:', error);
@@ -652,7 +630,6 @@ async function carregarDados() {
     if (e) {
       ESTOQUE = JSON.parse(e);
       HISTORICO = JSON.parse(localStorage.getItem(SK_H) || '[]');
-      RESPONSAVEIS = JSON.parse(localStorage.getItem(SK_R) || '[]');
       toast('Usando dados locais (offline)', 'info');
     } else {
       toast('Erro ao carregar dados do servidor', 'error');
@@ -679,55 +656,6 @@ function atualizarFooter() {
   document.getElementById('footerSync').textContent = 'Última sincronização: ' + (s ? fmtData(s.replace('T',' ').substring(0,16)) : '--');
 }
 
-// ===== RESPONSÁVEIS =====
-function atualizarSelectsResp() {
-  const opts = '<option value="">Selecione...</option>' +
-    RESPONSAVEIS.map(r => '<option value="'+r+'">'+r+'</option>').join('');
-  ['movResp','nvResp'].forEach(id => {
-    const sel = document.getElementById(id);
-    const val = sel.value;
-    sel.innerHTML = opts;
-    sel.value = val;
-  });
-}
-
-async function adicionarResponsavel() {
-  const input = document.getElementById('cfgNovoResp');
-  const nome = input.value.trim();
-  if (!nome) { toast('Digite um nome', 'error'); return; }
-  if (RESPONSAVEIS.includes(nome)) { toast('Responsável já cadastrado', 'error'); return; }
-
-  const { error } = await sb.from('responsaveis').insert({ nome });
-  if (error) { toast('Erro ao adicionar responsável: ' + error.message, 'error'); return; }
-
-  RESPONSAVEIS.push(nome);
-  RESPONSAVEIS.sort();
-  input.value = '';
-  atualizarDatalistas();
-  salvarLocalStorage();
-  toast('Responsável adicionado: ' + nome, 'success');
-}
-
-async function removerResponsavel(nome) {
-  if (!confirm('Remover "' + nome + '" da lista de responsáveis?')) return;
-
-  const { error } = await sb.from('responsaveis').update({ ativo: false }).eq('nome', nome);
-  if (error) { toast('Erro ao remover responsável: ' + error.message, 'error'); return; }
-
-  RESPONSAVEIS = RESPONSAVEIS.filter(r => r !== nome);
-  atualizarDatalistas();
-  salvarLocalStorage();
-  toast('Responsável removido: ' + nome, 'info');
-}
-
-function renderResponsaveis() {
-  const div = document.getElementById('cfgRespLista');
-  div.innerHTML = RESPONSAVEIS.map(r =>
-    '<span style="display:inline-flex;align-items:center;gap:4px;background:var(--azul-claro);padding:4px 10px;border-radius:4px;font-size:12px">' +
-    r + '<button onclick="removerResponsavel(\''+r.replace(/'/g,"\\'")+'\')" style="background:none;border:none;color:var(--vermelho);cursor:pointer;font-size:14px;font-weight:bold;padding:0 2px">&times;</button></span>'
-  ).join('');
-}
-
 // ===== DATALISTAS =====
 function atualizarDatalistas() {
   const fabs = [...new Set(ESTOQUE.map(x=>x.fabricante).filter(Boolean))].sort();
@@ -738,10 +666,6 @@ function atualizarDatalistas() {
   document.getElementById('dlFab').innerHTML = fabs.map(f=>'<option value="'+f+'">').join('');
   document.getElementById('dlProd').innerHTML = prods.map(p=>'<option value="'+p+'">').join('');
   document.getElementById('dlCaixa').innerHTML = caixas.map(c=>'<option value="'+c+'">').join('');
-
-  // Atualizar selects de responsáveis
-  atualizarSelectsResp();
-  renderResponsaveis();
 
   const sf = document.getElementById('invFab');
   const sv = sf.value;
@@ -943,13 +867,11 @@ async function confirmarMov() {
   if (!movItemId) { toast('Selecione um item', 'error'); return; }
 
   const qtd = parseInt(document.getElementById('movQtd').value);
-  const resp = document.getElementById('movResp').value;
   const destino = document.getElementById('movDestino').value;
   const os = document.getElementById('movOS').value.trim();
   const obs = document.getElementById('movObs').value.trim();
 
   if (!qtd || qtd <= 0) { toast('Quantidade inválida', 'error'); return; }
-  if (!resp) { toast('Informe o responsável', 'error'); return; }
   if ((destino === 'Projeto/OS' || destino === 'Devolução de projeto') && !os) {
     toast('Informe o número da OS', 'error'); return;
   }
@@ -961,7 +883,7 @@ async function confirmarMov() {
       p_item_id: movItemId,
       p_tipo: movTipo === 'entrada' ? 'ENTRADA' : 'SAIDA',
       p_quantidade: qtd,
-      p_responsavel: resp,
+      p_responsavel: user.email,
       p_destino: destino,
       p_numero_os: os,
       p_observacao: obs,
@@ -998,7 +920,6 @@ function limparMov() {
   document.getElementById('movSelected').style.display = 'none';
   document.getElementById('movResults').style.display = 'none';
   document.getElementById('movQtd').value = '1';
-  document.getElementById('movResp').value = '';
   document.getElementById('movOS').value = '';
   document.getElementById('movObs').value = '';
   document.getElementById('movBusca').focus();
@@ -1013,9 +934,8 @@ async function adicionarItem() {
   const fab = document.getElementById('nvFab').value.trim();
   const qtd = parseInt(document.getElementById('nvQtd').value);
   const caixa = document.getElementById('nvCaixa').value.trim();
-  const resp = document.getElementById('nvResp').value;
 
-  if (!codigo||!desc||!produto||!fab||!qtd||!caixa||!resp) { toast('Preencha todos os campos obrigatórios', 'error'); return; }
+  if (!codigo||!desc||!produto||!fab||!qtd||!caixa) { toast('Preencha todos os campos obrigatórios', 'error'); return; }
   if (ESTOQUE.find(x => x.codigo === codigo)) { toast('Código já existe no estoque', 'error'); return; }
 
   btnAdd.disabled = true;
@@ -1041,7 +961,7 @@ async function adicionarItem() {
     const { data: { user } } = await sb.auth.getUser();
     await sb.from('historico').insert({
       data_hora: agora(), codigo, descricao: desc,
-      tipo: 'ENTRADA', quantidade: qtd, responsavel: resp,
+      tipo: 'ENTRADA', quantidade: qtd, responsavel: user.email,
       destino: 'Item novo', numero_os: '', observacao: 'Cadastro inicial',
       saldo_anterior: 0, saldo_novo: qtd, user_id: user?.id
     });
@@ -1049,7 +969,7 @@ async function adicionarItem() {
     salvarLocalStorage();
     atualizarDatalistas();
     toast('Item adicionado — ' + desc, 'success');
-    ['nvCodigo','nvDesc','nvProduto','nvSubtipo','nvFab','nvQtd','nvCaixa','nvResp','nvObs'].forEach(id => document.getElementById(id).value = '');
+    ['nvCodigo','nvDesc','nvProduto','nvSubtipo','nvFab','nvQtd','nvCaixa','nvObs'].forEach(id => document.getElementById(id).value = '');
     document.getElementById('nvQtd').value = '1';
     document.getElementById('nvMinimo').value = '0';
   } catch(e) {
@@ -1204,32 +1124,42 @@ function exportarCSV() {
   toast('CSV exportado', 'success');
 }
 
-function importarJSON(ev) {
-  const file = ev.target.files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = async function(e) {
-    try {
-      const data = JSON.parse(e.target.result);
-      if (!data.estoque || !Array.isArray(data.estoque)) { toast('Arquivo inválido', 'error'); return; }
-      if (!confirm('Importar '+data.estoque.length+' itens? Itens com código existente serão atualizados.')) return;
+function exportarExcel() {
+  const dados = ESTOQUE.map(x => ({
+    'Código': x.codigo,
+    'Descrição': x.descricao,
+    'Produto': x.produto,
+    'Subtipo': x.subtipo || '',
+    'Fabricante': x.fabricante,
+    'Quantidade': x.quantidade,
+    'Unidade': x.unidade,
+    'Caixa': x.localizacao,
+    'Est. Mínimo': x.estoqueMinimo,
+    'Observação': x.observacao || '',
+    'Última Mov.': x.ultimaMovimentacao || ''
+  }));
+  const ws = XLSX.utils.json_to_sheet(dados);
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'Estoque');
 
-      // Upsert no Supabase por código
-      const rows = data.estoque.map(item => toSnake(item));
-      const { error } = await sb.from('estoque').upsert(rows, { onConflict: 'codigo' });
-      if (error) throw error;
+  const hist = HISTORICO.map(h => ({
+    'Data': h.dataHora,
+    'Tipo': h.tipo,
+    'Código': h.codigo,
+    'Descrição': h.descricao,
+    'Quantidade': h.quantidade,
+    'Responsável': h.responsavel,
+    'Destino': h.destino || '',
+    'OS': h.numeroOS || '',
+    'Saldo Anterior': h.saldoAnterior,
+    'Saldo Novo': h.saldoNovo
+  }));
+  const ws2 = XLSX.utils.json_to_sheet(hist);
+  XLSX.utils.book_append_sheet(wb, ws2, 'Histórico');
 
-      await carregarDados();
-      atualizarDatalistas();
-      renderizarTudo();
-      toast('Backup importado com sucesso (' + data.estoque.length + ' itens)', 'success');
-    } catch(err) {
-      console.error('Erro ao importar:', err);
-      toast('Erro ao importar: ' + err.message, 'error');
-    }
-  };
-  reader.readAsText(file);
-  ev.target.value = '';
+  const d = new Date();
+  XLSX.writeFile(wb, 'estoque-engenharia-'+d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')+'.xlsx');
+  toast('Excel exportado com sucesso', 'success');
 }
 
 // ===== INIT =====
@@ -1251,7 +1181,23 @@ sb.auth.onAuthStateChange((event, session) => {
 });
 
 // ===== INICIALIZAÇÃO =====
-verificarSessao();
+// Tratar confirmação de email (redirect do Supabase)
+(async () => {
+  const hash = window.location.hash;
+  if (hash && hash.includes('access_token')) {
+    const params = new URLSearchParams(hash.substring(1));
+    const accessToken = params.get('access_token');
+    const refreshToken = params.get('refresh_token');
+    if (accessToken && refreshToken) {
+      const { error } = await sb.auth.setSession({ access_token: accessToken, refresh_token: refreshToken });
+      if (!error) {
+        window.location.hash = '';
+        toast('Email confirmado com sucesso!', 'success');
+      }
+    }
+  }
+  verificarSessao();
+})();
 </script>
 
 </body></html>
