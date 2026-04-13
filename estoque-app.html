@@ -195,9 +195,28 @@ tbody td{padding:4px}
 #invTable td,#invTable th{padding:4px 4px;max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 #invTable td:first-child,#invTable th:first-child{padding-left:8px}
 #invTable td:last-child,#invTable th:last-child{padding-right:8px}
-/* History table: hide Destino, Saldo on mobile */
+/* History table mobile: show Data, Tipo, Descrição, Qtde */
+/* hide: Código(3), Responsável(6), Destino(7), OS(8), Saldo(9) */
+#hisTable th:nth-child(3),#hisTable td:nth-child(3),
+#hisTable th:nth-child(6),#hisTable td:nth-child(6),
 #hisTable th:nth-child(7),#hisTable td:nth-child(7),
+#hisTable th:nth-child(8),#hisTable td:nth-child(8),
 #hisTable th:nth-child(9),#hisTable td:nth-child(9){display:none}
+#hisTable{font-size:10px}
+#hisTable td,#hisTable th{padding:4px 4px;max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#hisTable td:first-child,#hisTable th:first-child{padding-left:8px}
+#hisTable td:last-child,#hisTable th:last-child{padding-right:8px}
+#hisTable tbody tr{cursor:pointer}
+/* History detail popup */
+.his-popup-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.7);z-index:300;align-items:center;justify-content:center}
+.his-popup-overlay.show{display:flex}
+.his-popup{background:var(--branco);border-radius:8px;width:90%;max-width:400px;max-height:80vh;overflow-y:auto}
+.his-popup-header{background:linear-gradient(to right,#003399,#006eee);color:#fff;padding:12px 16px;border-radius:8px 8px 0 0;display:flex;justify-content:space-between;align-items:center;font-size:14px;font-weight:700}
+.his-popup-body{padding:16px}
+.his-popup-row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--zebra);font-size:12px}
+.his-popup-row:last-child{border-bottom:none}
+.his-popup-label{font-weight:600;color:var(--texto2)}
+.his-popup-value{text-align:right;max-width:60%}
 /* Config min table: compact on mobile */
 #cfgMinTable{font-size:10px}
 #cfgMinTable td,#cfgMinTable th{padding:4px 4px;max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -477,6 +496,14 @@ Config
 <div class="form-group"><label>Observação</label><textarea id="edtObs" rows="3" style="resize:vertical"></textarea></div>
 </div>
 <div class="modal-footer"><button class="btn btn-outline" onclick="closeModal()">Cancelar</button><button class="btn btn-azul" onclick="saveEdit()">Salvar e Gravar</button></div>
+</div>
+</div>
+
+<!-- POPUP DETALHES HISTÓRICO (mobile) -->
+<div class="his-popup-overlay" id="hisPopup" onclick="if(event.target===this)this.classList.remove('show')">
+<div class="his-popup">
+<div class="his-popup-header"><span>Detalhes da Movimentação</span><button onclick="document.getElementById('hisPopup').classList.remove('show')" style="background:none;border:none;color:#fff;font-size:20px;cursor:pointer">&times;</button></div>
+<div class="his-popup-body" id="hisPopupBody"></div>
 </div>
 </div>
 
@@ -1182,13 +1209,36 @@ function renderHistory() {
 
   const tbody = document.querySelector('#hisTable tbody');
   document.getElementById('hisSemMov').style.display = filtered.length ? 'none' : 'block';
-  tbody.innerHTML = filtered.map(h =>
-    '<tr style="background:'+(h.tipo==='ENTRADA'?'var(--verde-claro)':'var(--vermelho-claro)')+'">'+
+  tbody.innerHTML = filtered.map((h,i) =>
+    '<tr onclick="showHistoryDetail('+i+')" style="background:'+(h.tipo==='ENTRADA'?'var(--verde-claro)':'var(--vermelho-claro)')+'">'+
     '<td>'+formatDate(h.dataHora)+'</td><td>'+esc(h.tipo)+'</td><td><code>'+esc(h.codigo)+'</code></td><td>'+esc(h.descricao)+'</td>'+
     '<td class="text-center">'+h.quantidade+'</td><td>'+esc(h.responsavel||'')+'</td><td>'+esc(h.destino||'')+'</td><td>'+esc(h.numeroOS||'')+'</td>'+
     '<td>'+h.saldoAnterior+' → '+h.saldoNovo+'</td></tr>'
   ).join('');
   document.getElementById('hisCount').textContent = filtered.length + ' movimentações';
+  window._hisFiltered = filtered;
+}
+
+function showHistoryDetail(idx) {
+  if (window.innerWidth > 600) return;
+  const h = window._hisFiltered[idx];
+  if (!h) return;
+  const rows = [
+    ['Data/Hora', formatDate(h.dataHora)],
+    ['Tipo', h.tipo],
+    ['Código', h.codigo],
+    ['Descrição', h.descricao],
+    ['Quantidade', h.quantidade],
+    ['Responsável', h.responsavel || '--'],
+    ['Destino', h.destino || '--'],
+    ['OS', h.numeroOS || '--'],
+    ['Observação', h.observacao || '--'],
+    ['Saldo', h.saldoAnterior + ' → ' + h.saldoNovo]
+  ];
+  document.getElementById('hisPopupBody').innerHTML = rows.map(r =>
+    '<div class="his-popup-row"><span class="his-popup-label">'+r[0]+'</span><span class="his-popup-value">'+esc(String(r[1]))+'</span></div>'
+  ).join('');
+  document.getElementById('hisPopup').classList.add('show');
 }
 
 // ===== CONFIGURAÇÕES =====
