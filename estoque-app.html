@@ -414,7 +414,7 @@ tbody td{padding:4px}
 <input type="text" id="cfgMinBusca" oninput="renderConfig()" placeholder="Buscar por código, descrição ou fabricante..." style="flex:1;min-width:200px;padding:7px 10px;border:1px solid var(--borda);border-radius:4px;font-family:inherit;font-size:12px">
 <button class="btn btn-azul" onclick="saveMinimums()">Salvar Mínimos</button>
 </div>
-<div class="table-wrap"><table id="cfgMinTable"><thead><tr><th>Código</th><th>Descrição</th><th>Produto</th><th>Subtipo</th><th>Fabricante</th><th class="text-center">Qtde</th><th class="text-center" style="width:80px">Mínimo</th></tr></thead><tbody></tbody></table></div>
+<div class="table-wrap"><table id="cfgMinTable"><thead><tr><th>Código</th><th>Descrição</th><th>Fabricante</th><th class="text-center">Qtde</th><th class="text-center" style="width:80px">Mínimo</th></tr></thead><tbody></tbody></table></div>
 <div style="margin-top:12px"><button class="btn btn-azul" onclick="saveMinimums()">Salvar Mínimos</button></div>
 </div>
 <div class="section">
@@ -1182,7 +1182,7 @@ function renderConfig() {
   const filtered = busca ? ESTOQUE.filter(x => norm(x.codigo+x.descricao+x.fabricante+x.produto+(x.subtipo||'')+(x.observacao||'')+x.localizacao+(x.nomeCaixa||'')).includes(busca)) : ESTOQUE;
   const tbody = document.querySelector('#cfgMinTable tbody');
   tbody.innerHTML = filtered.map(x =>
-    '<tr><td><code>'+esc(x.codigo)+'</code></td><td>'+esc(x.descricao)+'</td><td>'+esc(x.produto)+'</td><td>'+esc(x.subtipo||'')+'</td><td>'+esc(x.fabricante)+'</td><td class="text-center">'+x.quantidade+'</td>'+
+    '<tr><td><code>'+esc(x.codigo)+'</code></td><td>'+esc(x.descricao)+'</td><td>'+esc(x.fabricante)+'</td><td class="text-center">'+x.quantidade+'</td>'+
     '<td class="text-center"><input type="number" min="0" value="'+x.estoqueMinimo+'" data-id="'+x.id+'" style="width:60px;text-align:center;padding:4px;border:1px solid var(--borda);border-radius:3px"></td></tr>'
   ).join('');
 
