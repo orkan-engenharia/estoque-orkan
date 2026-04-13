@@ -173,14 +173,30 @@ tbody td{padding:4px}
 .search-results{max-height:150px}
 .login-box{width:95%;padding:20px}
 .chart-bar .bar-label{width:80px;font-size:10px}
-#userEmail{font-size:10px;max-width:120px;overflow:hidden;text-overflow:ellipsis}
+#userEmail{display:none}
+.nav-actions .btn-outline{padding:6px 10px;font-size:10px}
+.mobile-tabs{display:none!important}
+.app-footer{display:none!important}
+.container{padding-bottom:70px!important}
+.bottom-nav{display:flex!important;position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:2px solid var(--azul);z-index:200;padding:4px 0;justify-content:space-around}
+.bottom-nav button{background:none;border:none;display:flex;flex-direction:column;align-items:center;gap:2px;padding:4px 8px;font-family:inherit;font-size:9px;font-weight:600;color:var(--texto3);cursor:pointer}
+.bottom-nav button.active{color:var(--azul)}
+.bottom-nav button svg{width:20px;height:20px}
+/* Inventory table: hide #, Subtipo, Observação on mobile */
+#invTable th:nth-child(1),#invTable td:nth-child(1),
+#invTable th:nth-child(4),#invTable td:nth-child(4),
+#invTable th:nth-child(9),#invTable td:nth-child(9){display:none}
+/* History table: hide Destino, Saldo on mobile */
+#hisTable th:nth-child(7),#hisTable td:nth-child(7),
+#hisTable th:nth-child(9),#hisTable td:nth-child(9){display:none}
 }
 .table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:0 -4px;padding:0 4px}
+.bottom-nav{display:none}
 .mobile-tabs{display:none;overflow-x:auto;gap:4px;padding:8px 16px;background:var(--branco);border-bottom:1px solid var(--borda)}
 .mobile-tabs .nav-tab{white-space:nowrap;border-radius:4px;font-size:11px}
 /* PRINT */
 @media print{
-.top-bar,.navbar,.nav-actions,.app-footer,.filters,.toggle-btns,.mobile-tabs,.form-section,.btn{display:none!important}
+.top-bar,.navbar,.nav-actions,.app-footer,.filters,.toggle-btns,.mobile-tabs,.bottom-nav,.form-section,.btn{display:none!important}
 .tab-content.active{display:block!important}
 .container{max-width:none;padding:0}
 @page{size:A4 landscape;margin:10mm}
@@ -409,6 +425,29 @@ tbody td{padding:4px}
 
 </main>
 
+<nav class="bottom-nav" id="bottomNav">
+<button onclick="switchTab('inventario')" data-tab="inventario">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+Estoque
+</button>
+<button onclick="switchTab('movimentacao')" data-tab="movimentacao">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"/></svg>
+Mov.
+</button>
+<button onclick="switchTab('historico')" data-tab="historico">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+Histórico
+</button>
+<button onclick="switchTab('dashboard')" data-tab="dashboard">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h6v6H4zm10 0h6v6h-6zM4 14h6v6H4zm10 0h6v6h-6z"/></svg>
+Dashboard
+</button>
+<button onclick="switchTab('config')" data-tab="config">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+Config
+</button>
+</nav>
+
 <!-- MODAL EDITAR -->
 <div class="modal-overlay" id="modalEditar">
 <div class="modal">
@@ -580,6 +619,10 @@ async function showApp() {
   renderAll();
   initRealtime();
   resetInactivityTimer();
+  // Set first tab as active in bottom nav
+  document.querySelectorAll('.bottom-nav button').forEach(b => {
+    b.classList.toggle('active', b.dataset.tab === 'inventario');
+  });
 }
 
 function switchLoginTab(aba) {
@@ -769,6 +812,10 @@ function switchTab(tab) {
   if (tab === 'inventario') renderInventory();
   if (tab === 'historico') renderHistory();
   if (tab === 'config') renderConfig();
+  // Highlight bottom nav
+  document.querySelectorAll('.bottom-nav button').forEach(b => {
+    b.classList.toggle('active', b.dataset.tab === tab);
+  });
 }
 
 function openEntry() { switchTab('movimentacao'); toggleMov('entrada'); }
