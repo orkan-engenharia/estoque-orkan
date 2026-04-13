@@ -165,6 +165,8 @@ body{font-size:12px}
 .filters{flex-direction:column}
 .filters input,.filters select{min-width:100%;width:100%}
 .filters input[type=text]{min-width:100%}
+.date-filters{width:100%;display:flex!important;gap:6px;align-items:center}
+.date-filters input[type=date]{flex:1;min-width:0!important;max-width:none!important}
 .section{padding:10px;border-radius:4px;overflow:hidden;margin-bottom:12px}
 .section-title{font-size:13px}
 .card{min-width:100%}
@@ -387,7 +389,7 @@ tbody td{padding:4px}
 </div>
 <div class="form-row">
 <div class="form-group"><label>Destino *</label><select id="movDestino" onchange="checkOS()"><option value="Compra para estoque">Compra para estoque</option><option value="Devolução de projeto">Devolução de projeto</option><option value="Devolução de empréstimo">Devolução de empréstimo</option><option value="Transferência">Transferência</option></select></div>
-<div class="form-group" id="grpOS" style="display: none;"><label>Número da OS *</label><input type="text" id="movOS" placeholder="Ex: 12345"></div>
+<div class="form-group" id="grpOS" style="display: none;"><label>Número da OS *</label><input type="text" id="movOS" placeholder="5 dígitos (ex: 12345)" maxlength="5" inputmode="numeric" pattern="\d{5}"></div>
 </div>
 <div class="form-row"><div class="form-group"><label>Observação</label><input type="text" id="movObs" placeholder="Opcional"></div></div>
 <div style="margin-top:16px;display:flex;gap:8px">
@@ -430,8 +432,7 @@ tbody td{padding:4px}
 <input type="text" id="hisBusca" placeholder="Buscar..." oninput="renderHistory()">
 <select id="hisTipo" onchange="renderHistory()"><option value="">Tipo</option><option value="ENTRADA">Entrada</option><option value="SAIDA">Saída</option></select>
 <select id="hisResp" onchange="renderHistory()"><option value="">Responsável</option></select>
-<div style="display:flex;gap:6px;align-items:center"><span style="font-size:11px;color:var(--texto3);white-space:nowrap">De</span><input type="date" id="hisDataDe" onchange="renderHistory()" title="Data início" style="max-width:140px"></div>
-<div style="display:flex;gap:6px;align-items:center"><span style="font-size:11px;color:var(--texto3);white-space:nowrap">Até</span><input type="date" id="hisDataAte" onchange="renderHistory()" title="Data fim" style="max-width:140px"></div>
+<div class="date-filters" style="display:flex;gap:6px;align-items:center"><span style="font-size:11px;color:var(--texto3);white-space:nowrap">De</span><input type="date" id="hisDataDe" onchange="renderHistory()" title="Data início" style="max-width:140px"><span style="font-size:11px;color:var(--texto3);white-space:nowrap">Até</span><input type="date" id="hisDataAte" onchange="renderHistory()" title="Data fim" style="max-width:140px"></div>
 <input type="text" id="hisOS" placeholder="OS..." oninput="renderHistory()" style="max-width:100px">
 <button class="btn btn-azul" onclick="clearHistoryFilters()" style="padding:6px 14px;font-size:11px;background:var(--azul-escuro)">Limpar</button>
 <span class="result-count" id="hisCount">1 movimentações</span>
@@ -1056,8 +1057,16 @@ async function confirmMovement() {
 
   if (!qtd || qtd <= 0) { toast('Quantidade inválida', 'error'); return; }
   if ((destino === 'Projeto/OS' || destino === 'Devolução de projeto') && !os) {
-    toast('Informe o número da OS', 'error'); return;
+    toast('Informe o número da OS', 'error');
+    document.getElementById('movOS').classList.add('invalid');
+    return;
   }
+  if (os && !/^\d{5}$/.test(os)) {
+    toast('OS deve conter exatamente 5 números', 'error');
+    document.getElementById('movOS').classList.add('invalid');
+    return;
+  }
+  document.getElementById('movOS').classList.remove('invalid');
 
   btn.disabled = true;
   try {
