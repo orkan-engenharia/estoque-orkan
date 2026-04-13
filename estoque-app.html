@@ -347,7 +347,7 @@ tbody td{padding:4px}
 <select id="invProd" onchange="renderInventory()"><option value="">Produto</option><option>Acessório</option><option>Adaptador</option><option>Barramento</option><option>Base</option><option>Bloco</option><option>Borne</option><option>Botão</option><option>CPU</option><option>Cabo</option><option>Caixa</option><option>Chave</option><option>Conector</option><option>Contator</option><option>Disjuntor</option><option>Filtro</option><option>Fita</option><option>Fixador</option><option>Fixação</option><option>Fonte</option><option>Fusível</option><option>Garra de aterramento</option><option>Identificador</option><option>Leitor</option><option>Módulo</option><option>Pente</option><option>Placa terminal</option><option>Poste</option><option>Proteção contra surtos</option><option>Relé</option><option>Sensor</option><option>Tampa</option><option>Tampão</option><option>Temporizador</option><option>Terminal</option><option>Termostato</option><option>Ventilador</option></select>
 <select id="invCaixa" onchange="renderInventory()"><option value="">Caixa</option><option value="01">Cx 01</option><option value="02">Cx 02</option><option value="03">Cx 03</option><option value="04">Cx 04</option><option value="05">Cx 05</option><option value="06">Cx 06</option><option value="07">Cx 07</option><option value="08">Cx 08</option><option value="09">Cx 09</option><option value="10">Cx 10</option><option value="11">Cx 11</option><option value="12">Cx 12</option><option value="13">Cx 13</option><option value="14">Cx 14</option><option value="15">Cx 15</option><option value="16">Cx 16</option><option value="17">Cx 17</option><option value="18">Cx 18</option><option value="19">Cx 19</option><option value="20">Cx 20</option><option value="21">Cx 21</option></select>
 <select id="invEstoque" onchange="renderInventory()"><option value="">Estoque</option><option value="critico">Abaixo do mínimo</option><option value="baixo">No limite</option><option value="normal">Normal</option></select>
-<button class="btn btn-outline" onclick="clearInventoryFilters()" style="padding:6px 12px;font-size:11px">Limpar</button>
+<button class="btn btn-azul" onclick="clearInventoryFilters()" style="padding:6px 14px;font-size:11px;background:var(--azul-escuro)">Limpar</button>
 <span class="result-count" id="invCount">132 de 132 itens</span>
 </div>
 <div class="table-wrap"><table id="invTable"><thead><tr>
@@ -430,10 +430,10 @@ tbody td{padding:4px}
 <input type="text" id="hisBusca" placeholder="Buscar..." oninput="renderHistory()">
 <select id="hisTipo" onchange="renderHistory()"><option value="">Tipo</option><option value="ENTRADA">Entrada</option><option value="SAIDA">Saída</option></select>
 <select id="hisResp" onchange="renderHistory()"><option value="">Responsável</option></select>
-<label style="font-size:10px;color:var(--texto3);display:flex;flex-direction:column;gap:2px">De<input type="date" id="hisDataDe" onchange="renderHistory()" style="max-width:140px"></label>
-<label style="font-size:10px;color:var(--texto3);display:flex;flex-direction:column;gap:2px">Até<input type="date" id="hisDataAte" onchange="renderHistory()" style="max-width:140px"></label>
+<div style="display:flex;gap:6px;align-items:center"><span style="font-size:11px;color:var(--texto3);white-space:nowrap">De</span><input type="date" id="hisDataDe" onchange="renderHistory()" title="Data início" style="max-width:140px"></div>
+<div style="display:flex;gap:6px;align-items:center"><span style="font-size:11px;color:var(--texto3);white-space:nowrap">Até</span><input type="date" id="hisDataAte" onchange="renderHistory()" title="Data fim" style="max-width:140px"></div>
 <input type="text" id="hisOS" placeholder="OS..." oninput="renderHistory()" style="max-width:100px">
-<button class="btn btn-outline" onclick="clearHistoryFilters()" style="padding:6px 12px;font-size:11px">Limpar</button>
+<button class="btn btn-azul" onclick="clearHistoryFilters()" style="padding:6px 14px;font-size:11px;background:var(--azul-escuro)">Limpar</button>
 <span class="result-count" id="hisCount">1 movimentações</span>
 </div>
 <div class="table-wrap"><table id="hisTable"><thead><tr>
@@ -457,7 +457,7 @@ tbody td{padding:4px}
 <div style="display:flex;gap:8px;margin-bottom:12px;align-items:center;flex-wrap:wrap">
 <input type="text" id="cfgMinBusca" oninput="renderConfig()" placeholder="Buscar por código, descrição ou fabricante..." style="flex:1;min-width:200px;padding:7px 10px;border:1px solid var(--borda);border-radius:4px;font-family:inherit;font-size:12px">
 <button class="btn btn-azul" onclick="saveMinimums()">Salvar Mínimos</button>
-<button class="btn btn-outline" onclick="document.getElementById('cfgMinBusca').value='';renderConfig()" style="padding:6px 12px;font-size:11px">Limpar</button>
+<button class="btn btn-azul" onclick="document.getElementById('cfgMinBusca').value='';renderConfig()" style="padding:6px 14px;font-size:11px;background:var(--azul-escuro)">Limpar</button>
 </div>
 <div class="table-wrap"><table id="cfgMinTable"><thead><tr><th>Código</th><th>Descrição</th><th>Fabricante</th><th class="text-center">Qtde</th><th class="text-center" style="width:80px">Mínimo</th></tr></thead><tbody></tbody></table></div>
 <div style="margin-top:12px"><button class="btn btn-azul" onclick="saveMinimums()">Salvar Mínimos</button></div>
