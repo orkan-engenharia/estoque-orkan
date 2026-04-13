@@ -433,6 +433,12 @@ function historicoToCamel(row) {
     saldoAnterior: row.saldo_anterior, saldoNovo: row.saldo_novo
   };
 }
+function nomeDoEmail(email) {
+  // helena.alencar@orkan.com.br → Helena Alencar
+  // junior@orkan.com.br → Junior
+  const parte = (email || '').split('@')[0];
+  return parte.split('.').map(p => p.charAt(0).toUpperCase() + p.slice(1).toLowerCase()).join(' ');
+}
 
 // ===== AUTENTICAÇÃO =====
 async function fazerLogin(e) {
@@ -520,7 +526,7 @@ async function mostrarApp() {
 
   const { data: { user } } = await sb.auth.getUser();
   if (user) {
-    document.getElementById('userEmail').textContent = user.user_metadata?.nome || user.email;
+    document.getElementById('userEmail').textContent = user.user_metadata?.nome || nomeDoEmail(user.email);
   }
 
   await carregarDados();
@@ -883,7 +889,7 @@ async function confirmarMov() {
       p_item_id: movItemId,
       p_tipo: movTipo === 'entrada' ? 'ENTRADA' : 'SAIDA',
       p_quantidade: qtd,
-      p_responsavel: user.email,
+      p_responsavel: nomeDoEmail(user.email),
       p_destino: destino,
       p_numero_os: os,
       p_observacao: obs,
@@ -961,7 +967,7 @@ async function adicionarItem() {
     const { data: { user } } = await sb.auth.getUser();
     await sb.from('historico').insert({
       data_hora: agora(), codigo, descricao: desc,
-      tipo: 'ENTRADA', quantidade: qtd, responsavel: user.email,
+      tipo: 'ENTRADA', quantidade: qtd, responsavel: nomeDoEmail(user.email),
       destino: 'Item novo', numero_os: '', observacao: 'Cadastro inicial',
       saldo_anterior: 0, saldo_novo: qtd, user_id: user?.id
     });
