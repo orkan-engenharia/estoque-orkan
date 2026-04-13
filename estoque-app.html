@@ -614,7 +614,7 @@ function salvarLocalStorage() {
   try {
     localStorage.setItem(SK_E, JSON.stringify(ESTOQUE));
     localStorage.setItem(SK_H, JSON.stringify(HISTORICO));
-    localStorage.setItem(SK_S, new Date().toISOString());
+    localStorage.setItem(SK_S, agora());
   } catch(e) { /* cache only */ }
   atualizarFooter();
 }
