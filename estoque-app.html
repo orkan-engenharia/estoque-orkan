@@ -408,29 +408,29 @@ let sortAsc = true;
 // ===== CONVERSÃO SNAKE_CASE <-> CAMELCASE =====
 function toSnake(obj) {
   return {
-    codigo: obj.codigo, descricao: obj.descricao, produto: obj.produto,
-    subtipo: obj.subtipo, fabricante: obj.fabricante, quantidade: obj.quantidade,
-    estoque_minimo: obj.estoqueMinimo, localizacao: obj.localizacao,
-    nome_caixa: obj.nomeCaixa, unidade: obj.unidade, observacao: obj.observacao,
-    ultima_movimentacao: obj.ultimaMovimentacao
+    code: obj.codigo, description: obj.descricao, product: obj.produto,
+    subtype: obj.subtipo, manufacturer: obj.fabricante, quantity: obj.quantidade,
+    min_stock: obj.estoqueMinimo, location: obj.localizacao,
+    box_name: obj.nomeCaixa, unit: obj.unidade, notes: obj.observacao,
+    last_movement: obj.ultimaMovimentacao
   };
 }
 function toCamel(row) {
   return {
-    id: row.id, codigo: row.codigo, descricao: row.descricao, produto: row.produto,
-    subtipo: row.subtipo, fabricante: row.fabricante, quantidade: row.quantidade,
-    estoqueMinimo: row.estoque_minimo, localizacao: row.localizacao,
-    nomeCaixa: row.nome_caixa, unidade: row.unidade, observacao: row.observacao,
-    ultimaMovimentacao: row.ultima_movimentacao
+    id: row.id, codigo: row.code, descricao: row.description, produto: row.product,
+    subtipo: row.subtype, fabricante: row.manufacturer, quantidade: row.quantity,
+    estoqueMinimo: row.min_stock, localizacao: row.location,
+    nomeCaixa: row.box_name, unidade: row.unit, observacao: row.notes,
+    ultimaMovimentacao: row.last_movement
   };
 }
 function historicoToCamel(row) {
   return {
-    id: row.id, dataHora: row.data_hora, codigo: row.codigo,
-    descricao: row.descricao, tipo: row.tipo, quantidade: row.quantidade,
-    responsavel: row.responsavel, destino: row.destino,
-    numeroOS: row.numero_os, observacao: row.observacao,
-    saldoAnterior: row.saldo_anterior, saldoNovo: row.saldo_novo
+    id: row.id, dataHora: row.moved_at, codigo: row.code,
+    descricao: row.description, tipo: row.type, quantidade: row.quantity,
+    responsavel: row.responsible, destino: row.destination,
+    numeroOS: row.work_order, observacao: row.notes,
+    saldoAnterior: row.previous_balance, saldoNovo: row.new_balance
   };
 }
 function nameFromEmail(email) {
@@ -569,7 +569,7 @@ function resetInactivityTimer() {
 // ===== REALTIME =====
 function initRealtime() {
   sb.channel('estoque-changes')
-    .on('postgres_changes', { event: '*', schema: 'public', table: 'estoque' }, (payload) => {
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'inventory' }, (payload) => {
       if (payload.eventType === 'UPDATE') {
         const updated = toCamel(payload.new);
         const idx = ESTOQUE.findIndex(i => i.id === updated.id);
@@ -585,7 +585,7 @@ function initRealtime() {
       renderDashboard();
       renderInventory();
     })
-    .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'historico' }, (payload) => {
+    .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'movements' }, (payload) => {
       if (!HISTORICO.find(h => h.id === payload.new.id)) {
         HISTORICO.unshift(historicoToCamel(payload.new));
         saveToLocalStorage();
@@ -621,11 +621,11 @@ function saveToLocalStorage() {
 
 async function loadData() {
   try {
-    const { data: eRows, error: errE } = await sb.from('estoque').select('*').order('id');
+    const { data: eRows, error: errE } = await sb.from('inventory').select('*').order('id');
     if (errE) throw errE;
     ESTOQUE = eRows.map(toCamel);
 
-    const { data: hRows, error: errH } = await sb.from('historico').select('*').order('data_hora', { ascending: false });
+    const { data: hRows, error: errH } = await sb.from('movements').select('*').order('moved_at', { ascending: false });
     if (errH) throw errH;
     HISTORICO = hRows.map(historicoToCamel);
 
@@ -885,14 +885,14 @@ async function confirmMovement() {
   btn.disabled = true;
   try {
     const { data: { user } } = await sb.auth.getUser();
-    const { data, error } = await sb.rpc('movimentar_estoque', {
+    const { data, error } = await sb.rpc('move_inventory', {
       p_item_id: movItemId,
-      p_tipo: movType === 'entrada' ? 'ENTRADA' : 'SAIDA',
-      p_quantidade: qtd,
-      p_responsavel: nameFromEmail(user.email),
-      p_destino: destino,
-      p_numero_os: os,
-      p_observacao: obs,
+      p_type: movType === 'entrada' ? 'ENTRADA' : 'SAIDA',
+      p_quantity: qtd,
+      p_responsible: nameFromEmail(user.email),
+      p_destination: destino,
+      p_work_order: os,
+      p_notes: obs,
       p_user_id: user?.id
     });
 
@@ -902,14 +902,14 @@ async function confirmMovement() {
     // Atualizar estado local
     const item = ESTOQUE.find(i => i.id === movItemId);
     if (item) {
-      item.quantidade = data.saldo_novo;
+      item.quantidade = data.new_balance;
       item.ultimaMovimentacao = now();
     }
 
     saveToLocalStorage();
     updateDataLists();
     const tipoTxt = movType === 'entrada' ? 'Entrada' : 'Saída';
-    toast(tipoTxt + ' registrada — ' + data.descricao + ': ' + data.saldo_anterior + ' → ' + data.saldo_novo,
+    toast(tipoTxt + ' registrada — ' + data.description + ': ' + data.previous_balance + ' → ' + data.new_balance,
           movType === 'entrada' ? 'success' : 'error');
     clearMovement();
   } catch(e) {
@@ -947,17 +947,17 @@ async function addItem() {
   btnAdd.disabled = true;
   try {
     const novoSnake = {
-      codigo, descricao: desc, produto,
-      subtipo: document.getElementById('nvSubtipo').value.trim() || null,
-      fabricante: fab, quantidade: qtd,
-      estoque_minimo: parseInt(document.getElementById('nvMinimo').value) || 0,
-      localizacao: caixa, nome_caixa: '',
-      unidade: document.getElementById('nvUnid').value,
-      observacao: document.getElementById('nvObs').value.trim(),
-      ultima_movimentacao: now()
+      code: codigo, description: desc, product: produto,
+      subtype: document.getElementById('nvSubtipo').value.trim() || null,
+      manufacturer: fab, quantity: qtd,
+      min_stock: parseInt(document.getElementById('nvMinimo').value) || 0,
+      location: caixa, box_name: '',
+      unit: document.getElementById('nvUnid').value,
+      notes: document.getElementById('nvObs').value.trim(),
+      last_movement: now()
     };
 
-    const { data: inserted, error } = await sb.from('estoque').insert(novoSnake).select().single();
+    const { data: inserted, error } = await sb.from('inventory').insert(novoSnake).select().single();
     if (error) throw error;
 
     const novoCamel = toCamel(inserted);
@@ -965,11 +965,11 @@ async function addItem() {
 
     // Registrar entrada inicial no histórico
     const { data: { user } } = await sb.auth.getUser();
-    await sb.from('historico').insert({
-      data_hora: now(), codigo, descricao: desc,
-      tipo: 'ENTRADA', quantidade: qtd, responsavel: nameFromEmail(user.email),
-      destino: 'Item novo', numero_os: '', observacao: 'Cadastro inicial',
-      saldo_anterior: 0, saldo_novo: qtd, user_id: user?.id
+    await sb.from('movements').insert({
+      moved_at: now(), code: codigo, description: desc,
+      type: 'ENTRADA', quantity: qtd, responsible: nameFromEmail(user.email),
+      destination: 'Item novo', work_order: '', notes: 'Cadastro inicial',
+      previous_balance: 0, new_balance: qtd, user_id: user?.id
     });
 
     saveToLocalStorage();
@@ -1021,7 +1021,7 @@ async function saveEdit() {
   };
 
   try {
-    const { error } = await sb.from('estoque').update(toSnake(dados)).eq('id', id);
+    const { error } = await sb.from('inventory').update(toSnake(dados)).eq('id', id);
     if (error) throw error;
 
     // Atualizar estado local
@@ -1089,7 +1089,7 @@ async function saveMinimums() {
     const x = ESTOQUE.find(i => i.id === id);
     if (x && x.estoqueMinimo !== novoMin) {
       x.estoqueMinimo = novoMin;
-      updates.push(sb.from('estoque').update({ estoque_minimo: novoMin }).eq('id', id));
+      updates.push(sb.from('inventory').update({ min_stock: novoMin }).eq('id', id));
     }
   });
 
