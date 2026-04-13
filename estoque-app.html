@@ -132,11 +132,50 @@ tbody tr:hover{background:var(--azul-claro)}
 .save-dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:4px}
 .save-dot.saved{background:var(--verde)}
 .save-dot.unsaved{background:var(--laranja)}
-/* RESPONSIVE */
+/* RESPONSIVE - TABLET */
 @media(max-width:900px){
 .nav-tabs{display:none}.two-col{grid-template-columns:1fr}.cards{flex-direction:column}
 .mobile-tabs{display:flex!important}
 }
+/* RESPONSIVE - MOBILE */
+@media(max-width:600px){
+body{font-size:12px}
+.top-bar{padding:6px 10px}
+.nav-logo{height:28px}
+.nav-title{font-size:13px}
+.navbar{padding:4px 8px;height:auto;min-height:40px;flex-wrap:wrap;gap:4px}
+.nav-actions{width:100%;justify-content:space-between}
+.btn{padding:8px 10px;font-size:11px}
+.btn-entrada,.btn-saida{flex:1}
+.container{padding:8px;padding-bottom:50px}
+.form-row{flex-direction:column}
+.form-group{min-width:100%!important;max-width:100%!important}
+.filters{flex-direction:column}
+.filters input,.filters select{min-width:100%;width:100%}
+.filters input[type=text]{min-width:100%}
+.section{padding:10px}
+.section-title{font-size:13px}
+.card{min-width:100%}
+.card-value{font-size:18px}
+.modal{max-width:100%;width:100%;border-radius:0;max-height:100vh}
+.modal-header{border-radius:0}
+.app-footer{font-size:10px;padding:4px 8px}
+.app-footer span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+table{font-size:11px}
+thead th{padding:6px 4px;font-size:10px}
+tbody td{padding:4px}
+.mobile-tabs .nav-tab{padding:8px 10px;font-size:11px}
+#toast-container{top:auto;bottom:50px;right:8px;left:8px}
+.toast{min-width:auto;width:100%}
+.toggle-btns{flex-direction:column}
+.toggle-btn:first-child{border-radius:6px 6px 0 0}
+.toggle-btn:last-child{border-radius:0 0 6px 6px}
+.search-results{max-height:150px}
+.login-box{width:95%;padding:20px}
+.chart-bar .bar-label{width:80px;font-size:10px}
+#userEmail{font-size:10px;max-width:120px;overflow:hidden;text-overflow:ellipsis}
+}
+.table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:0 -4px;padding:0 4px}
 .mobile-tabs{display:none;overflow-x:auto;gap:4px;padding:8px 16px;background:var(--branco);border-bottom:1px solid var(--borda)}
 .mobile-tabs .nav-tab{white-space:nowrap;border-radius:4px;font-size:11px}
 /* PRINT */
@@ -238,11 +277,11 @@ tbody tr:hover{background:var(--azul-claro)}
 <div class="two-col" id="dashCharts"><div class="section"><div class="section-title">Itens por Fabricante</div><div class="chart-bar"><span class="bar-label">SIEMENS</span><div class="bar" style="width:100%;background:#106EEA"></div><span class="bar-value">56</span></div><div class="chart-bar"><span class="bar-label">PHOENIX CONTACT</span><div class="bar" style="width:52%;background:#3BA5A8"></div><span class="bar-value">29</span></div><div class="chart-bar"><span class="bar-label">SICK</span><div class="bar" style="width:21%;background:#7AC143"></div><span class="bar-value">12</span></div><div class="chart-bar"><span class="bar-label">FINDER</span><div class="bar" style="width:20%;background:#8E24AA"></div><span class="bar-value">11</span></div><div class="chart-bar"><span class="bar-label">EATON</span><div class="bar" style="width:13%;background:#F57C00"></div><span class="bar-value">7</span></div><div class="chart-bar"><span class="bar-label">WEIDMULLER</span><div class="bar" style="width:5%;background:#E53935"></div><span class="bar-value">3</span></div><div class="chart-bar"><span class="bar-label">WAGO</span><div class="bar" style="width:5%;background:#525353"></div><span class="bar-value">3</span></div><div class="chart-bar"><span class="bar-label">WOHNER</span><div class="bar" style="width:4%;background:#0031A6"></div><span class="bar-value">2</span></div><div class="chart-bar"><span class="bar-label"></span><div class="bar" style="width:4%;background:#11A428"></div><span class="bar-value">2</span></div><div class="chart-bar"><span class="bar-label">ICOTEK</span><div class="bar" style="width:2%;background:#C62828"></div><span class="bar-value">1</span></div><div class="chart-bar"><span class="bar-label">VIPA</span><div class="bar" style="width:2%;background:#00838F"></div><span class="bar-value">1</span></div><div class="chart-bar"><span class="bar-label">OMRON</span><div class="bar" style="width:2%;background:#558B2F"></div><span class="bar-value">1</span></div><div class="chart-bar"><span class="bar-label">SCHNEIDER</span><div class="bar" style="width:2%;background:#6A1B9A"></div><span class="bar-value">1</span></div><div class="chart-bar"><span class="bar-label">BHS</span><div class="bar" style="width:2%;background:#D84315"></div><span class="bar-value">1</span></div><div class="chart-bar"><span class="bar-label">CARLO GAVAZZI</span><div class="bar" style="width:2%;background:#37474F"></div><span class="bar-value">1</span></div><div class="chart-bar"><span class="bar-label">HellermannTyton</span><div class="bar" style="width:2%;background:#795548"></div><span class="bar-value">1</span></div></div><div class="section"><div class="section-title">Top 12 Categorias</div><div class="chart-bar"><span class="bar-label">Módulo</span><div class="bar" style="width:100%;background:#106EEA"></div><span class="bar-value">26</span></div><div class="chart-bar"><span class="bar-label">Borne</span><div class="bar" style="width:65%;background:#3BA5A8"></div><span class="bar-value">17</span></div><div class="chart-bar"><span class="bar-label">Tampa</span><div class="bar" style="width:42%;background:#7AC143"></div><span class="bar-value">11</span></div><div class="chart-bar"><span class="bar-label">Bloco</span><div class="bar" style="width:38%;background:#8E24AA"></div><span class="bar-value">10</span></div><div class="chart-bar"><span class="bar-label">Botão</span><div class="bar" style="width:23%;background:#F57C00"></div><span class="bar-value">6</span></div><div class="chart-bar"><span class="bar-label">Disjuntor</span><div class="bar" style="width:23%;background:#E53935"></div><span class="bar-value">6</span></div><div class="chart-bar"><span class="bar-label">Contator</span><div class="bar" style="width:19%;background:#525353"></div><span class="bar-value">5</span></div><div class="chart-bar"><span class="bar-label">Relé</span><div class="bar" style="width:15%;background:#0031A6"></div><span class="bar-value">4</span></div><div class="chart-bar"><span class="bar-label">Chave</span><div class="bar" style="width:15%;background:#11A428"></div><span class="bar-value">4</span></div><div class="chart-bar"><span class="bar-label">Base</span><div class="bar" style="width:15%;background:#C62828"></div><span class="bar-value">4</span></div><div class="chart-bar"><span class="bar-label">CPU</span><div class="bar" style="width:12%;background:#00838F"></div><span class="bar-value">3</span></div><div class="chart-bar"><span class="bar-label">Sensor</span><div class="bar" style="width:12%;background:#558B2F"></div><span class="bar-value">3</span></div></div></div>
 <div class="section">
 <div class="section-title">Alertas - Estoque Crítico</div>
-<table id="dashAlertas"><thead><tr><th>Código</th><th>Descrição</th><th>Fabricante</th><th class="text-center">Qtde</th><th class="text-center">Caixa</th></tr></thead><tbody></tbody></table>
+<div class="table-wrap"><table id="dashAlertas"><thead><tr><th>Código</th><th>Descrição</th><th>Fabricante</th><th class="text-center">Qtde</th><th class="text-center">Caixa</th></tr></thead><tbody></tbody></table></div>
 </div>
 <div class="section">
 <div class="section-title">Últimas Movimentações</div>
-<table id="dashUltMov"><thead><tr><th>Data</th><th>Tipo</th><th>Descrição</th><th class="text-center">Qtde</th><th>Responsável</th><th>OS</th></tr></thead><tbody></tbody></table>
+<div class="table-wrap"><table id="dashUltMov"><thead><tr><th>Data</th><th>Tipo</th><th>Descrição</th><th class="text-center">Qtde</th><th>Responsável</th><th>OS</th></tr></thead><tbody></tbody></table></div>
 <p id="dashSemMov" style="color:var(--texto3);font-size:12px;padding:12px">Nenhuma movimentação registrada ainda.</p>
 </div>
 </div>
@@ -257,7 +296,7 @@ tbody tr:hover{background:var(--azul-claro)}
 <select id="invEstoque" onchange="renderInventory()"><option value="">Estoque</option><option value="critico">Abaixo do mínimo</option><option value="baixo">No limite</option><option value="normal">Normal</option></select>
 <span class="result-count" id="invCount">132 de 132 itens</span>
 </div>
-<table id="invTable"><thead><tr>
+<div class="table-wrap"><table id="invTable"><thead><tr>
 <th onclick="sortBy('id')" style="width:35px">#</th>
 <th onclick="sortBy('fabricante')">Fabricante</th>
 <th onclick="sortBy('produto')">Produto</th>
@@ -267,7 +306,7 @@ tbody tr:hover{background:var(--azul-claro)}
 <th onclick="sortBy('quantidade')" class="text-center" style="width:55px">Qtde</th>
 <th onclick="sortBy('localizacao')" class="text-center" style="width:55px">Caixa</th>
 <th>Observação</th>
-</tr></thead><tbody></tbody></table>
+</tr></thead><tbody></tbody></table></div>
 </div>
 
 <!-- ==================== MOVIMENTAÇÃO ==================== -->
@@ -337,9 +376,9 @@ tbody tr:hover{background:var(--azul-claro)}
 <input type="text" id="hisOS" placeholder="OS..." oninput="renderHistory()" style="max-width:120px">
 <span class="result-count" id="hisCount">1 movimentações</span>
 </div>
-<table id="hisTable"><thead><tr>
+<div class="table-wrap"><table id="hisTable"><thead><tr>
 <th>Data/Hora</th><th>Tipo</th><th>Código</th><th>Descrição</th><th class="text-center">Qtde</th><th>Responsável</th><th>Destino</th><th>OS</th><th>Saldo</th>
-</tr></thead><tbody></tbody></table>
+</tr></thead><tbody></tbody></table></div>
 <p id="hisSemMov" style="color:var(--texto3);font-size:12px;padding:16px">Nenhuma movimentação registrada ainda.</p>
 </div>
 
@@ -359,7 +398,7 @@ tbody tr:hover{background:var(--azul-claro)}
 <input type="text" id="cfgMinBusca" oninput="renderConfig()" placeholder="Buscar por código, descrição ou fabricante..." style="flex:1;min-width:200px;padding:7px 10px;border:1px solid var(--borda);border-radius:4px;font-family:inherit;font-size:12px">
 <button class="btn btn-azul" onclick="saveMinimums()">Salvar Mínimos</button>
 </div>
-<table id="cfgMinTable"><thead><tr><th>Código</th><th>Descrição</th><th>Fabricante</th><th class="text-center">Qtde</th><th class="text-center" style="width:80px">Mínimo</th></tr></thead><tbody></tbody></table>
+<div class="table-wrap"><table id="cfgMinTable"><thead><tr><th>Código</th><th>Descrição</th><th>Fabricante</th><th class="text-center">Qtde</th><th class="text-center" style="width:80px">Mínimo</th></tr></thead><tbody></tbody></table></div>
 <div style="margin-top:12px"><button class="btn btn-azul" onclick="saveMinimums()">Salvar Mínimos</button></div>
 </div>
 <div class="section">
