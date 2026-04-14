@@ -283,6 +283,23 @@ tbody td{padding:4px}
 <div class="form-group"><label>Email</label><input type="email" id="loginEmail" placeholder="seu.nome@orkan.com.br" required></div>
 <div class="form-group"><label>Senha</label><input type="password" id="loginSenha" placeholder="Sua senha" required></div>
 <button type="submit" class="btn-login">Entrar</button>
+<div style="text-align:center;margin-top:12px"><a href="#" onclick="showResetForm(event)" style="color:var(--azul);font-size:12px;text-decoration:none">Esqueci minha senha</a></div>
+</form>
+<form id="formReset" class="login-form" style="display:none" onsubmit="handleResetRequest(event)">
+<div id="resetErro" class="login-erro"></div>
+<div id="resetSucesso" class="login-sucesso"></div>
+<p style="font-size:13px;color:var(--texto2);margin-bottom:16px">Digite seu email para receber o link de redefinição de senha.</p>
+<div class="form-group"><label>Email</label><input type="email" id="resetEmail" placeholder="seu.nome@orkan.com.br" required></div>
+<button type="submit" class="btn-login">Enviar link</button>
+<div style="text-align:center;margin-top:12px"><a href="#" onclick="hideResetForm(event)" style="color:var(--azul);font-size:12px;text-decoration:none">Voltar ao login</a></div>
+</form>
+<form id="formNovaSenha" class="login-form" style="display:none" onsubmit="handleNewPassword(event)">
+<div id="novaSenhaErro" class="login-erro"></div>
+<div id="novaSenhaSucesso" class="login-sucesso"></div>
+<p style="font-size:13px;color:var(--texto2);margin-bottom:16px">Defina sua nova senha.</p>
+<div class="form-group"><label>Nova senha</label><input type="password" id="novaSenha" placeholder="Mínimo 6 caracteres" required></div>
+<div class="form-group"><label>Confirmar nova senha</label><input type="password" id="novaSenhaConfirmar" placeholder="Repita a senha" required></div>
+<button type="submit" class="btn-login">Redefinir senha</button>
 </form>
 <form id="formCadastro" class="login-form" style="display:none" onsubmit="handleSignup(event)">
 <div id="cadErro" class="login-erro"></div>
@@ -688,6 +705,88 @@ function switchLoginTab(aba) {
   document.querySelectorAll('.login-form').forEach(f => f.style.display = 'none');
   document.querySelector('.login-tab[data-aba="' + aba + '"]').classList.add('active');
   document.getElementById(aba === 'entrar' ? 'formLogin' : 'formCadastro').style.display = 'block';
+  document.querySelector('.login-tabs').style.display = 'flex';
+}
+
+function showResetForm(e) {
+  e.preventDefault();
+  document.querySelectorAll('.login-form').forEach(f => f.style.display = 'none');
+  document.querySelector('.login-tabs').style.display = 'none';
+  document.getElementById('formReset').style.display = 'block';
+  document.getElementById('resetErro').style.display = 'none';
+  document.getElementById('resetSucesso').style.display = 'none';
+  document.getElementById('resetEmail').value = document.getElementById('loginEmail').value.trim();
+}
+
+function hideResetForm(e) {
+  e.preventDefault();
+  document.getElementById('formReset').style.display = 'none';
+  document.querySelector('.login-tabs').style.display = 'flex';
+  document.getElementById('formLogin').style.display = 'block';
+  document.querySelectorAll('.login-tab').forEach(t => t.classList.remove('active'));
+  document.querySelector('.login-tab[data-aba="entrar"]').classList.add('active');
+}
+
+async function handleResetRequest(e) {
+  e.preventDefault();
+  const email = document.getElementById('resetEmail').value.trim();
+  const errDiv = document.getElementById('resetErro');
+  const sucDiv = document.getElementById('resetSucesso');
+  errDiv.style.display = 'none';
+  sucDiv.style.display = 'none';
+
+  if (!email.endsWith('@orkan.com.br')) {
+    errDiv.textContent = 'Use um email @orkan.com.br';
+    errDiv.style.display = 'block';
+    return;
+  }
+
+  const { error } = await sb.auth.resetPasswordForEmail(email, {
+    redirectTo: window.location.origin + window.location.pathname
+  });
+
+  if (error) {
+    errDiv.textContent = 'Erro ao enviar email. Tente novamente.';
+    errDiv.style.display = 'block';
+    return;
+  }
+
+  sucDiv.textContent = 'Link enviado! Verifique seu email.';
+  sucDiv.style.display = 'block';
+}
+
+async function handleNewPassword(e) {
+  e.preventDefault();
+  const senha = document.getElementById('novaSenha').value;
+  const confirmar = document.getElementById('novaSenhaConfirmar').value;
+  const errDiv = document.getElementById('novaSenhaErro');
+  const sucDiv = document.getElementById('novaSenhaSucesso');
+  errDiv.style.display = 'none';
+  sucDiv.style.display = 'none';
+
+  if (senha.length < 6) {
+    errDiv.textContent = 'A senha deve ter pelo menos 6 caracteres';
+    errDiv.style.display = 'block';
+    return;
+  }
+
+  if (senha !== confirmar) {
+    errDiv.textContent = 'As senhas não conferem';
+    errDiv.style.display = 'block';
+    return;
+  }
+
+  const { error } = await sb.auth.updateUser({ password: senha });
+
+  if (error) {
+    errDiv.textContent = 'Erro ao redefinir senha. Tente novamente.';
+    errDiv.style.display = 'block';
+    return;
+  }
+
+  sucDiv.textContent = 'Senha redefinida com sucesso!';
+  sucDiv.style.display = 'block';
+  setTimeout(() => showApp(), 1500);
 }
 
 // ===== TIMER DE INATIVIDADE =====
@@ -1414,6 +1513,13 @@ sb.auth.onAuthStateChange((event, session) => {
     clearTimeout(warningTimer);
     document.getElementById('loginScreen').style.display = 'flex';
     document.getElementById('appContent').style.display = 'none';
+  }
+  if (event === 'PASSWORD_RECOVERY') {
+    document.getElementById('loginScreen').style.display = 'flex';
+    document.getElementById('appContent').style.display = 'none';
+    document.querySelectorAll('.login-form').forEach(f => f.style.display = 'none');
+    document.querySelector('.login-tabs').style.display = 'none';
+    document.getElementById('formNovaSenha').style.display = 'block';
   }
 });
 
