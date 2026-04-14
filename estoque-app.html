@@ -746,12 +746,16 @@ async function handleResetRequest(e) {
   });
 
   if (error) {
-    errDiv.textContent = 'Erro ao enviar email. Tente novamente.';
+    if (error.message && error.message.includes('rate')) {
+      errDiv.textContent = 'Muitas tentativas. Aguarde alguns minutos e tente novamente.';
+    } else {
+      errDiv.textContent = error.message || 'Erro ao enviar email. Tente novamente.';
+    }
     errDiv.style.display = 'block';
     return;
   }
 
-  sucDiv.textContent = 'Link enviado! Verifique seu email.';
+  sucDiv.textContent = 'Link enviado! Verifique seu email (pode levar alguns minutos).';
   sucDiv.style.display = 'block';
 }
 
