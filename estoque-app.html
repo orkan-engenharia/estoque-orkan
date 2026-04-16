@@ -1309,9 +1309,37 @@ async function saveEdit() {
     observacao: document.getElementById('edtObs').value.trim()
   };
 
+  // Detectar o que mudou
+  const fields = ['descricao','produto','subtipo','fabricante','localizacao','estoqueMinimo','unidade','observacao'];
+  const changes = {};
+  for (const f of fields) {
+    const oldVal = x[f] ?? '';
+    const newVal = dados[f] ?? '';
+    if (String(oldVal) !== String(newVal)) {
+      changes[f] = { de: oldVal, para: newVal };
+    }
+  }
+
+  if (Object.keys(changes).length === 0) {
+    closeModal();
+    toast('Nenhuma alteração detectada', 'info');
+    return;
+  }
+
   try {
     const { error } = await sb.from('inventory').update(toSnake(dados)).eq('id', id);
     if (error) throw error;
+
+    // Gravar auditoria
+    const { data: { user } } = await sb.auth.getUser();
+    const nome = user?.user_metadata?.nome || user?.email || 'Desconhecido';
+    await sb.from('inventory_audit').insert({
+      inventory_id: id,
+      code: x.codigo,
+      changed_by: nome,
+      user_id: user?.id || null,
+      changes: changes
+    });
 
     // Atualizar estado local
     Object.assign(x, { descricao: dados.descricao, produto: dados.produto, subtipo: dados.subtipo,
