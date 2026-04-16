@@ -1238,6 +1238,9 @@ async function addItem() {
 
   btnAdd.disabled = true;
   try {
+    const { data: { user } } = await sb.auth.getUser();
+    const nome = user?.user_metadata?.nome || nameFromEmail(user.email);
+
     const novoSnake = {
       code: codigo, description: desc, product: produto,
       subtype: document.getElementById('nvSubtipo').value.trim() || null,
@@ -1246,7 +1249,8 @@ async function addItem() {
       location: caixa, box_name: '',
       unit: document.getElementById('nvUnid').value,
       notes: document.getElementById('nvObs').value.trim(),
-      last_movement: now()
+      last_movement: now(),
+      created_by: nome
     };
 
     const { data: inserted, error } = await sb.from('inventory').insert(novoSnake).select().single();
@@ -1256,10 +1260,9 @@ async function addItem() {
     ESTOQUE.push(novoCamel);
 
     // Registrar entrada inicial no histórico
-    const { data: { user } } = await sb.auth.getUser();
     await sb.from('movements').insert({
       moved_at: now(), code: codigo, description: desc,
-      type: 'ENTRADA', quantity: qtd, responsible: nameFromEmail(user.email),
+      type: 'ENTRADA', quantity: qtd, responsible: nome,
       destination: 'Item novo', work_order: '', notes: 'Cadastro inicial',
       previous_balance: 0, new_balance: qtd, user_id: user?.id
     });
