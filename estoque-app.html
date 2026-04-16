@@ -411,7 +411,7 @@ tbody td{padding:4px}
 <div class="form-group" style="max-width:120px"><label>Quantidade *</label><input type="number" id="movQtd" min="1" value="1"></div>
 </div>
 <div class="form-row">
-<div class="form-group"><label>Destino *</label><select id="movDestino" onchange="checkOS()"><option value="Compra para estoque">Compra para estoque</option><option value="Devolução de projeto">Devolução de projeto</option><option value="Devolução de empréstimo">Devolução de empréstimo</option><option value="Transferência">Transferência</option></select></div>
+<div class="form-group"><label>Destino *</label><select id="movDestino" onchange="checkOS()"><option value="Compra para estoque">Compra para estoque</option><option value="Devolução de empréstimo">Devolução de empréstimo</option><option value="Devolução de projeto" selected>Devolução de projeto</option><option value="Transferência">Transferência</option></select></div>
 <div class="form-group" id="grpOS" style="display: none;"><label>Número da OS *</label><input type="text" id="movOS" placeholder="5 dígitos (ex: 12345)" maxlength="5" inputmode="numeric" pattern="\d{5}"></div>
 </div>
 <div class="form-row"><div class="form-group"><label>Observação</label><input type="text" id="movObs" placeholder="Opcional"></div></div>
@@ -429,20 +429,24 @@ tbody td{padding:4px}
 <h3>Adicionar Novo Item ao Estoque</h3>
 <div class="form-row">
 <div class="form-group"><label>Código *</label><input type="text" id="nvCodigo"></div>
-<div class="form-group"><label>Descrição *</label><input type="text" id="nvDesc"></div>
+<div class="form-group"><label>Descrição *</label><input type="text" id="nvDesc" oninput="this.value=this.value.toUpperCase()"></div>
 </div>
 <div class="form-row">
-<div class="form-group"><label>Produto / Categoria *</label><input type="text" id="nvProduto" list="dlProd"></div>
+<div class="form-group"><label>Produto / Categoria *</label><select id="nvProduto" onchange="toggleCustom('nvProduto')"></select><input type="text" id="nvProdutoCustom" style="display:none;margin-top:4px" placeholder="Digite novo produto"></div>
 <div class="form-group"><label>Subtipo</label><input type="text" id="nvSubtipo"></div>
 </div>
 <div class="form-row">
-<div class="form-group"><label>Fabricante *</label><input type="text" id="nvFab" list="dlFab"></div>
+<div class="form-group"><label>Fabricante *</label><select id="nvFab" onchange="toggleCustom('nvFab')"></select><input type="text" id="nvFabCustom" style="display:none;margin-top:4px" placeholder="Digite novo fabricante"></div>
 <div class="form-group" style="max-width:120px"><label>Quantidade *</label><input type="number" id="nvQtd" min="1" value="1"></div>
 <div class="form-group" style="max-width:120px"><label>Unidade</label><select id="nvUnid"><option>peça</option><option>metro</option><option>barra</option><option>unidade</option><option>conjunto</option><option>kit</option></select></div>
 </div>
 <div class="form-row">
-<div class="form-group" style="max-width:120px"><label>Caixa / Local *</label><input type="text" id="nvCaixa" list="dlCaixa"></div>
+<div class="form-group" style="max-width:120px"><label>Caixa / Local *</label><select id="nvCaixa" onchange="toggleCustom('nvCaixa')"></select><input type="text" id="nvCaixaCustom" style="display:none;margin-top:4px" placeholder="Digite nova caixa"></div>
 <div class="form-group" style="max-width:140px"><label>Estoque mínimo</label><input type="number" id="nvMinimo" min="0" value="0"></div>
+</div>
+<div class="form-row">
+<div class="form-group"><label>Destino *</label><select id="nvDestino" onchange="checkNvOS()"><option value="Compra para estoque">Compra para estoque</option><option value="Devolução de empréstimo">Devolução de empréstimo</option><option value="Devolução de projeto" selected>Devolução de projeto</option><option value="Transferência">Transferência</option></select></div>
+<div class="form-group" id="nvGrpOS"><label>Número da OS *</label><input type="text" id="nvOS" placeholder="5 dígitos (ex: 12345)" maxlength="5" inputmode="numeric" pattern="\d{5}"></div>
 </div>
 <div class="form-group"><label>Observação</label><input type="text" id="nvObs"></div>
 <div style="margin-top:16px"><button class="btn btn-azul" id="btnAddItem" onclick="addItem()">Adicionar Item e Salvar</button></div>
@@ -947,28 +951,43 @@ function updateDataLists() {
   const caixas = [...new Set(ESTOQUE.map(x=>x.localizacao).filter(Boolean))].sort((a,b)=>a.localeCompare(b,undefined,{numeric:true}));
   const resps = [...new Set(HISTORICO.map(x=>x.responsavel).filter(Boolean))].sort();
 
-  document.getElementById('dlFab').innerHTML = fabs.map(f=>'<option value="'+f+'">').join('');
-  document.getElementById('dlProd').innerHTML = prods.map(p=>'<option value="'+p+'">').join('');
-  document.getElementById('dlCaixa').innerHTML = caixas.map(c=>'<option value="'+c+'">').join('');
+  document.getElementById('dlFab').innerHTML = fabs.map(f=>'<option value="'+esc(f)+'">').join('');
+  document.getElementById('dlProd').innerHTML = prods.map(p=>'<option value="'+esc(p)+'">').join('');
+  document.getElementById('dlCaixa').innerHTML = caixas.map(c=>'<option value="'+esc(c)+'">').join('');
+
+  const nvp = document.getElementById('nvProduto');
+  const nvpv = nvp.value;
+  nvp.innerHTML = '<option value="">Selecione...</option>' + prods.map(p=>'<option value="'+esc(p)+'">'+esc(p)+'</option>').join('') + '<option value="__NOVO__">+ Adicionar novo</option>';
+  nvp.value = nvpv;
+
+  const nvf = document.getElementById('nvFab');
+  const nvfv = nvf.value;
+  nvf.innerHTML = '<option value="">Selecione...</option>' + fabs.map(f=>'<option value="'+esc(f)+'">'+esc(f)+'</option>').join('') + '<option value="__NOVO__">+ Adicionar novo</option>';
+  nvf.value = nvfv;
+
+  const nvc = document.getElementById('nvCaixa');
+  const nvcv = nvc.value;
+  nvc.innerHTML = '<option value="">Selecione...</option>' + caixas.map(c=>'<option value="'+esc(c)+'">Cx '+esc(c)+'</option>').join('') + '<option value="__NOVO__">+ Adicionar nova</option>';
+  nvc.value = nvcv;
 
   const sf = document.getElementById('invFab');
   const sv = sf.value;
-  sf.innerHTML = '<option value="">Fabricante</option>' + fabs.map(f=>'<option>'+f+'</option>').join('');
+  sf.innerHTML = '<option value="">Fabricante</option>' + fabs.map(f=>'<option value="'+esc(f)+'">'+esc(f)+'</option>').join('');
   sf.value = sv;
 
   const sp = document.getElementById('invProd');
   const spv = sp.value;
-  sp.innerHTML = '<option value="">Produto</option>' + prods.map(p=>'<option>'+p+'</option>').join('');
+  sp.innerHTML = '<option value="">Produto</option>' + prods.map(p=>'<option value="'+esc(p)+'">'+esc(p)+'</option>').join('');
   sp.value = spv;
 
   const sc = document.getElementById('invCaixa');
   const scv = sc.value;
-  sc.innerHTML = '<option value="">Caixa</option>' + caixas.map(c=>'<option value="'+c+'">Cx '+c+'</option>').join('');
+  sc.innerHTML = '<option value="">Caixa</option>' + caixas.map(c=>'<option value="'+esc(c)+'">Cx '+esc(c)+'</option>').join('');
   sc.value = scv;
 
   const hr = document.getElementById('hisResp');
   const hrv = hr.value;
-  hr.innerHTML = '<option value="">Responsável</option>' + resps.map(r=>'<option>'+r+'</option>').join('');
+  hr.innerHTML = '<option value="">Responsável</option>' + resps.map(r=>'<option value="'+esc(r)+'">'+esc(r)+'</option>').join('');
   hr.value = hrv;
 }
 
@@ -1118,9 +1137,9 @@ function toggleMov(tipo) {
     document.getElementById('btnConfirmMov').className = 'btn ' + (tipo==='entrada'?'btn-entrada':'btn-saida');
     const sel = document.getElementById('movDestino');
     if (tipo === 'entrada') {
-      sel.innerHTML = '<option value="Compra para estoque">Compra para estoque</option><option value="Devolução de projeto">Devolução de projeto</option><option value="Devolução de empréstimo">Devolução de empréstimo</option><option value="Transferência">Transferência</option>';
+      sel.innerHTML = '<option value="Compra para estoque">Compra para estoque</option><option value="Devolução de empréstimo">Devolução de empréstimo</option><option value="Devolução de projeto" selected>Devolução de projeto</option><option value="Transferência">Transferência</option>';
     } else {
-      sel.innerHTML = '<option value="Projeto/OS">Projeto/OS</option><option value="Uso interno">Uso interno</option><option value="Manutenção">Manutenção</option><option value="Empréstimo">Empréstimo</option><option value="Descarte">Descarte</option>';
+      sel.innerHTML = '<option value="Descarte">Descarte</option><option value="Empréstimo">Empréstimo</option><option value="Manutenção">Manutenção</option><option value="Projeto/OS" selected>Projeto/OS</option><option value="Uso interno">Uso interno</option>';
     }
     checkOS();
   }
@@ -1229,17 +1248,46 @@ function clearMovement() {
   document.getElementById('movBusca').focus();
 }
 
+function checkNvOS() {
+  const v = document.getElementById('nvDestino').value;
+  document.getElementById('nvGrpOS').style.display = (v==='Devolução de projeto') ? 'block' : 'none';
+}
+
+function toggleCustom(id) {
+  const sel = document.getElementById(id);
+  const custom = document.getElementById(id + 'Custom');
+  if (sel.value === '__NOVO__') {
+    custom.style.display = 'block';
+    custom.focus();
+  } else {
+    custom.style.display = 'none';
+    custom.value = '';
+  }
+}
+
+function getNvValue(id) {
+  const sel = document.getElementById(id);
+  if (sel.value === '__NOVO__') {
+    return (document.getElementById(id + 'Custom').value || '').trim();
+  }
+  return sel.value.trim();
+}
+
 async function addItem() {
   const btnAdd = document.getElementById('btnAddItem');
   if (btnAdd.disabled) return;
   const codigo = document.getElementById('nvCodigo').value.trim();
   const desc = document.getElementById('nvDesc').value.trim();
-  const produto = document.getElementById('nvProduto').value.trim();
-  const fab = document.getElementById('nvFab').value.trim();
+  const produto = getNvValue('nvProduto');
+  const fab = getNvValue('nvFab');
   const qtd = parseInt(document.getElementById('nvQtd').value);
-  const caixa = document.getElementById('nvCaixa').value.trim();
+  const caixa = getNvValue('nvCaixa');
+  const destino = document.getElementById('nvDestino').value;
+  const os = document.getElementById('nvOS').value.trim();
 
   if (!codigo||!desc||!produto||!fab||!qtd||!caixa) { toast('Preencha todos os campos obrigatórios', 'error'); return; }
+  if (destino === 'Devolução de projeto' && !os) { toast('Informe o número da OS', 'error'); return; }
+  if (destino === 'Devolução de projeto' && !/^\d{5}$/.test(os)) { toast('OS deve ter 5 dígitos', 'error'); return; }
   if (ESTOQUE.find(x => x.codigo === codigo)) { toast('Código já existe no estoque', 'error'); return; }
 
   btnAdd.disabled = true;
@@ -1269,16 +1317,23 @@ async function addItem() {
     await sb.from('movements').insert({
       moved_at: now(), code: codigo, description: desc,
       type: 'ENTRADA', quantity: qtd, responsible: nome,
-      destination: 'Item novo', work_order: '', notes: 'Cadastro inicial',
+      destination: destino, work_order: os, notes: 'Cadastro inicial',
       previous_balance: 0, new_balance: qtd, user_id: user?.id
     });
 
     saveToLocalStorage();
     updateDataLists();
     toast('Item adicionado — ' + desc, 'success');
-    ['nvCodigo','nvDesc','nvProduto','nvSubtipo','nvFab','nvQtd','nvCaixa','nvObs'].forEach(id => document.getElementById(id).value = '');
+    ['nvCodigo','nvDesc','nvProduto','nvSubtipo','nvFab','nvQtd','nvCaixa','nvObs','nvOS'].forEach(id => document.getElementById(id).value = '');
+    ['nvProduto','nvFab','nvCaixa'].forEach(id => {
+      const custom = document.getElementById(id + 'Custom');
+      custom.value = '';
+      custom.style.display = 'none';
+    });
     document.getElementById('nvQtd').value = '1';
     document.getElementById('nvMinimo').value = '0';
+    document.getElementById('nvDestino').value = 'Devolução de projeto';
+    document.getElementById('nvGrpOS').style.display = 'block';
   } catch(e) {
     console.error('Erro ao adicionar item:', e);
     toast('Erro ao adicionar item no servidor', 'error');
