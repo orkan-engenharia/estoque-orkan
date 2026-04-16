@@ -644,7 +644,10 @@ async function handleSignup(e) {
   const { data, error } = await sb.auth.signUp({
     email,
     password: senha,
-    options: { data: { nome } }
+    options: {
+      data: { nome },
+      emailRedirectTo: window.location.origin + window.location.pathname
+    }
   });
   if (error) {
     errDiv.textContent = error.message || 'Erro ao cadastrar';
