@@ -1,0 +1,17 @@
+{
+  "name": "Estoque Engenharia - Orkan",
+  "short_name": "Estoque",
+  "description": "Gestão de Estoque - Engenharia Orkan",
+  "start_url": "./estoque-app.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#003399",
+  "theme_color": "#003399",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='192' height='192' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' rx='32' fill='%23003399'/%3E%3Ctext x='96' y='80' text-anchor='middle' font-family='Arial,sans-serif' font-size='28' font-weight='bold' fill='white' letter-spacing='3'%3EORKAN%3C/text%3E%3Crect x='36' y='95' width='120' height='2' fill='%237AC143' rx='1'/%3E%3Ctext x='96' y='125' text-anchor='middle' font-family='Arial,sans-serif' font-size='16' font-weight='600' fill='rgba(255,255,255,0.9)'%3EESTOQUE%3C/text%3E%3C/svg%3E",
+      "sizes": "192x192",
+      "type": "image/svg+xml"
+    }
+  ]
+}
