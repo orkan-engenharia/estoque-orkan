@@ -919,7 +919,7 @@ function formatDate(d) {
   // Simple date string (YYYY-MM-DD HH:MM)
   const p=d.split(/[-T ]/); return p.length>=3?p[2]+'/'+p[1]+'/'+p[0]+(p[3]?' '+p[3]:''):'--';
 }
-function now() { const d=new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')+' '+String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0'); }
+function now() { return new Date().toISOString(); }
 function toast(msg, tipo) {
   const c = document.getElementById('toast-container');
   const t = document.createElement('div');
