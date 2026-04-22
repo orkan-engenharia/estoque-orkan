@@ -121,6 +121,9 @@ tbody tr:hover{background:var(--azul-claro)}
 /* MODAL */
 .modal-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.7);z-index:200;align-items:center;justify-content:center}
 .modal-overlay.show{display:flex}
+body.no-admin .admin-only{display:none!important}
+body.no-admin #modalEditar .modal-body input[readonly],
+body.no-admin #modalEditar .modal-body textarea[readonly]{background:var(--zebra);color:var(--texto2);cursor:default;border-color:var(--borda)}
 /* HISTORY DETAIL POPUP - global (desktop + mobile) */
 .his-popup-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.7);z-index:300;align-items:center;justify-content:center}
 .his-popup-overlay.show{display:flex}
@@ -228,6 +231,15 @@ tbody td{padding:4px}
 #hisTable td:first-child,#hisTable th:first-child{padding-left:8px}
 #hisTable td:last-child,#hisTable th:last-child{padding-right:8px}
 #hisTable tbody tr{cursor:pointer}
+/* Dashboard ultimas movimentacoes mobile: show Data, Tipo, Descricao, Qtde */
+/* hide: Responsavel(5), OS(6) */
+#dashUltMov th:nth-child(5),#dashUltMov td:nth-child(5),
+#dashUltMov th:nth-child(6),#dashUltMov td:nth-child(6){display:none}
+#dashUltMov{font-size:10px}
+#dashUltMov td,#dashUltMov th{padding:4px 4px;max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#dashUltMov td:first-child,#dashUltMov th:first-child{padding-left:8px}
+#dashUltMov td:last-child,#dashUltMov th:last-child{padding-right:8px}
+#dashUltMov tbody tr{cursor:pointer}
 /* Config min table: compact on mobile */
 #cfgMinTable{font-size:10px}
 #cfgMinTable td,#cfgMinTable th{padding:4px 4px;max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -329,7 +341,7 @@ tbody td{padding:4px}
 <button class="nav-tab" onclick="switchTab('movimentacao')">Movimentação</button>
 <button class="nav-tab" onclick="switchTab('historico')">Histórico</button>
 <button class="nav-tab" onclick="switchTab('dashboard')">Dashboard</button>
-<button class="nav-tab" onclick="switchTab('config')">Configurações</button>
+<button class="nav-tab admin-only" onclick="switchTab('config')">Configurações</button>
 </div>
 <div class="nav-actions">
 <button class="btn btn-entrada" onclick="openEntry()">+ Entrada</button>
@@ -344,7 +356,7 @@ tbody td{padding:4px}
 <button class="nav-tab" onclick="switchTab('movimentacao')">Movimentação</button>
 <button class="nav-tab" onclick="switchTab('historico')">Histórico</button>
 <button class="nav-tab" onclick="switchTab('dashboard')">Dashboard</button>
-<button class="nav-tab" onclick="switchTab('config')">Configurações</button>
+<button class="nav-tab admin-only" onclick="switchTab('config')">Configurações</button>
 </div>
 
 <main class="container">
@@ -393,7 +405,7 @@ tbody td{padding:4px}
 <div class="toggle-btns">
 <button id="togEntrada" class="toggle-btn active-entrada" onclick="toggleMov('entrada')">Entrada de Material</button>
 <button id="togSaida" class="toggle-btn" onclick="toggleMov('saida')">Saída de Material</button>
-<button id="togNovo" class="toggle-btn" onclick="toggleMov('novo')">Novo Item</button>
+<button id="togNovo" class="toggle-btn admin-only" onclick="toggleMov('novo')">Novo Item</button>
 </div>
 
 <!-- ENTRADA / SAÍDA -->
@@ -432,16 +444,16 @@ tbody td{padding:4px}
 <div class="form-group"><label>Descrição *</label><input type="text" id="nvDesc" oninput="this.value=this.value.toUpperCase()"></div>
 </div>
 <div class="form-row">
-<div class="form-group"><label>Produto / Categoria *</label><select id="nvProduto" onchange="toggleCustom('nvProduto')"></select><input type="text" id="nvProdutoCustom" style="display:none;margin-top:4px" placeholder="Digite novo produto"></div>
+<div class="form-group"><label>Produto / Categoria *</label><select id="nvProduto" onchange="toggleCustom('nvProduto')"></select><input type="text" id="nvProdutoCustom" style="display:none;margin-top:4px" placeholder="Digite novo produto" aria-label="Novo produto"></div>
 <div class="form-group"><label>Subtipo</label><input type="text" id="nvSubtipo"></div>
 </div>
 <div class="form-row">
-<div class="form-group"><label>Fabricante *</label><select id="nvFab" onchange="toggleCustom('nvFab')"></select><input type="text" id="nvFabCustom" style="display:none;margin-top:4px" placeholder="Digite novo fabricante"></div>
+<div class="form-group"><label>Fabricante *</label><select id="nvFab" onchange="toggleCustom('nvFab')"></select><input type="text" id="nvFabCustom" style="display:none;margin-top:4px" placeholder="Digite novo fabricante" aria-label="Novo fabricante"></div>
 <div class="form-group" style="max-width:120px"><label>Quantidade *</label><input type="number" id="nvQtd" min="1" value="1"></div>
 <div class="form-group" style="max-width:120px"><label>Unidade</label><select id="nvUnid"><option>peça</option><option>metro</option><option>barra</option><option>unidade</option><option>conjunto</option><option>kit</option></select></div>
 </div>
 <div class="form-row">
-<div class="form-group" style="max-width:120px"><label>Caixa / Local *</label><select id="nvCaixa" onchange="toggleCustom('nvCaixa')"></select><input type="text" id="nvCaixaCustom" style="display:none;margin-top:4px" placeholder="Digite nova caixa"></div>
+<div class="form-group" style="max-width:120px"><label>Caixa / Local *</label><select id="nvCaixa" onchange="toggleCustom('nvCaixa')"></select><input type="text" id="nvCaixaCustom" style="display:none;margin-top:4px" placeholder="Digite nova caixa" aria-label="Nova caixa ou localização"></div>
 <div class="form-group" style="max-width:140px"><label>Estoque mínimo</label><input type="number" id="nvMinimo" min="0" value="0"></div>
 </div>
 <div class="form-row">
@@ -491,6 +503,15 @@ tbody td{padding:4px}
 <div style="margin-top:12px"><button class="btn btn-azul" onclick="saveMinimums()">Salvar Mínimos</button></div>
 </div>
 <div class="section">
+<div class="section-title">Usuários e Permissões</div>
+<div style="display:flex;gap:8px;margin-bottom:12px;align-items:center;flex-wrap:wrap">
+<button class="btn btn-azul" onclick="loadUserRoles()" style="padding:6px 14px;font-size:11px">Atualizar lista</button>
+<span style="font-size:11px;color:var(--texto3)">Admin gerencia quem pode cadastrar/editar itens. Usuário comum só faz entrada/saída.</span>
+</div>
+<div class="table-wrap"><table id="cfgRolesTable"><thead><tr><th>Email</th><th class="text-center" style="width:90px">Papel</th><th class="text-center" style="width:150px">Ação</th></tr></thead><tbody></tbody></table></div>
+<p id="cfgRolesEmpty" style="color:var(--texto3);font-size:12px;padding:12px;display:none">Nenhum usuário encontrado.</p>
+</div>
+<div class="section">
 <div class="section-title">Informações do Sistema</div>
 <div id="cfgInfo" style="font-size:12px;color:var(--texto2)">Versão: 1.0<br>Itens no estoque: 132<br>Movimentações: 1<br>Último salvamento: 10/04/2026 21:26<br>Tamanho dos dados: 48.7 KB<br>Arquivo vinculado: Não</div>
 </div>
@@ -515,7 +536,7 @@ Histórico
 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h6v6H4zm10 0h6v6h-6zM4 14h6v6H4zm10 0h6v6h-6z"/></svg>
 Dashboard
 </button>
-<button onclick="switchTab('config')" data-tab="config">
+<button class="admin-only" onclick="switchTab('config')" data-tab="config">
 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
 Config
 </button>
@@ -534,7 +555,7 @@ Config
 <div class="form-row"><div class="form-group" style="max-width:120px"><label>Caixa</label><input type="text" id="edtCaixa" list="dlCaixa"></div><div class="form-group" style="max-width:140px"><label>Estoque mínimo</label><input type="number" id="edtMinimo" min="0"></div><div class="form-group"><label>Unidade</label><input type="text" id="edtUnid"></div></div>
 <div class="form-group"><label>Observação</label><textarea id="edtObs" rows="3" style="resize:vertical"></textarea></div>
 </div>
-<div class="modal-footer"><button class="btn btn-outline" onclick="closeModal()">Cancelar</button><button class="btn btn-azul" onclick="saveEdit()">Salvar e Gravar</button></div>
+<div class="modal-footer"><button class="btn btn-outline" onclick="closeModal()">Cancelar</button><button class="btn btn-azul" id="btnSaveEdit" onclick="saveEdit()">Salvar e Gravar</button></div>
 </div>
 </div>
 
@@ -553,16 +574,44 @@ Config
 
 <footer class="app-footer">
 <span id="footerSync">Última sincronização: --</span>
-<span><a href="manual.html" target="_blank" style="color:var(--texto3);text-decoration:none;margin-right:12px">Ajuda</a>Estoque Engenharia v2.0</span>
+<span><a href="docs/manual-estoque-orkan.html" target="_blank" style="color:var(--texto3);text-decoration:none;margin-right:12px">Ajuda</a>Estoque Engenharia v2.0</span>
 </footer>
 
 </div><!-- /appContent -->
 
 <script>
 // ===== CONFIGURAÇÃO SUPABASE =====
-const SUPABASE_URL = 'https://rpumyrlovwtwssevjbsp.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJwdW15cmxvdnd0d3NzZXZqYnNwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYwODI2ODcsImV4cCI6MjA5MTY1ODY4N30.PBn9mrMmUgCf4nT84XPjYBGw7M0z7vOIG2VPLGALCqU';
+// Detecção automática por hostname: produção vs homologação.
+// Nunca aponta prod pra banco de homolog por acidente.
+const ENV_CONFIG = {
+  prod: {
+    url: 'https://rpumyrlovwtwssevjbsp.supabase.co',
+    anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJwdW15cmxvdnd0d3NzZXZqYnNwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYwODI2ODcsImV4cCI6MjA5MTY1ODY4N30.PBn9mrMmUgCf4nT84XPjYBGw7M0z7vOIG2VPLGALCqU'
+  },
+  homolog: {
+    url: 'https://earxvgvwjutgegxeclfn.supabase.co',
+    anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVhcnh2Z3Z3anV0Z2VneGVjbGZuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY0MjgwNDgsImV4cCI6MjA5MjAwNDA0OH0.emjIhQWfzwezTP61cAdFx39LrvAMhuhxqOteZuUC4bM'
+  }
+};
+const IS_PROD = location.hostname === 'orkan-engenharia.github.io';
+const ENV_NAME = IS_PROD ? 'prod' : 'homolog';
+const SUPABASE_URL = ENV_CONFIG[ENV_NAME].url;
+const SUPABASE_ANON_KEY = ENV_CONFIG[ENV_NAME].anonKey;
 const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+// Banner visivel em homolog para evitar confusao com prod
+if (!IS_PROD) {
+  window.addEventListener('DOMContentLoaded', () => {
+    const banner = document.createElement('div');
+    banner.textContent = 'HOMOLOG — banco de testes (' + location.hostname + ')';
+    banner.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:9999;background:#fbbf24;color:#1f2937;text-align:center;font-weight:700;font-size:13px;padding:4px;letter-spacing:0.5px;box-shadow:0 2px 4px rgba(0,0,0,0.2);height:24px;box-sizing:border-box';
+    document.body.appendChild(banner);
+    // Empurra navbar sticky e tela de login pra baixo do banner
+    const style = document.createElement('style');
+    style.textContent = '.navbar{top:24px!important}#loginScreen{top:24px!important}';
+    document.head.appendChild(style);
+  });
+}
 
 // ===== DADOS DE TRABALHO =====
 let ESTOQUE = [];
@@ -571,6 +620,7 @@ let movItemId = null;
 let movType = 'entrada';
 let sortCol = 'id';
 let sortAsc = true;
+let IS_ADMIN = false;
 
 // ===== CONVERSÃO SNAKE_CASE <-> CAMELCASE =====
 function toSnake(obj) {
@@ -676,8 +726,9 @@ async function handleLogout() {
   clearTimeout(inactivityTimer);
   clearTimeout(warningTimer);
   await sb.auth.signOut();
-  document.getElementById('loginScreen').style.display = 'flex';
-  document.getElementById('appContent').style.display = 'none';
+  // Reload garante state limpo: aba ativa, modais, cache em memoria.
+  // Evita que usuario seguinte veja a ultima tela do anterior (ex: admin em Config).
+  location.reload();
 }
 
 async function checkSession() {
@@ -701,6 +752,12 @@ async function showApp() {
     const firstName = fullName.split(' ')[0];
     const mobileUser = document.getElementById('mobileUserName');
     if (mobileUser) mobileUser.textContent = firstName;
+
+    // Consulta role do usuario. Default = user (seguro por omissao).
+    const { data: roleRow } = await sb
+      .from('user_roles').select('role').eq('user_id', user.id).maybeSingle();
+    IS_ADMIN = roleRow?.role === 'admin';
+    document.body.classList.toggle('no-admin', !IS_ADMIN);
   }
 
   await loadData();
@@ -993,6 +1050,10 @@ function updateDataLists() {
 
 // ===== NAVEGAÇÃO =====
 function switchTab(tab) {
+  if (tab === 'config' && !IS_ADMIN) {
+    toast('Apenas administradores podem acessar Configurações', 'error');
+    return;
+  }
   document.querySelectorAll('.tab-content').forEach(d => d.classList.remove('active'));
   document.getElementById('tab-'+tab).classList.add('active');
   document.querySelectorAll('.nav-tab').forEach(b => {
@@ -1002,7 +1063,7 @@ function switchTab(tab) {
   if (tab === 'dashboard') renderDashboard();
   if (tab === 'inventario') renderInventory();
   if (tab === 'historico') renderHistory();
-  if (tab === 'config') renderConfig();
+  if (tab === 'config') { renderConfig(); loadUserRoles(); }
   // Highlight bottom nav
   document.querySelectorAll('.bottom-nav button').forEach(b => {
     b.classList.toggle('active', b.dataset.tab === tab);
@@ -1057,9 +1118,32 @@ function renderDashboard() {
   const tb2 = document.querySelector('#dashUltMov tbody');
   const ult = HISTORICO.slice(-10).reverse();
   document.getElementById('dashSemMov').style.display = ult.length ? 'none' : 'block';
-  tb2.innerHTML = ult.map(h =>
-    '<tr style="background:'+(h.tipo==='ENTRADA'?'var(--verde-claro)':'var(--vermelho-claro)')+'"><td>'+formatDate(h.dataHora)+'</td><td>'+esc(h.tipo)+'</td><td>'+esc(h.descricao)+'</td><td class="text-center">'+h.quantidade+'</td><td>'+esc(h.responsavel||'')+'</td><td>'+esc(h.numeroOS||'')+'</td></tr>'
+  tb2.innerHTML = ult.map((h,i) =>
+    '<tr onclick="showDashMovDetail('+i+')" style="background:'+(h.tipo==='ENTRADA'?'var(--verde-claro)':'var(--vermelho-claro)')+'"><td>'+formatDate(h.dataHora)+'</td><td>'+esc(h.tipo)+'</td><td>'+esc(h.descricao)+'</td><td class="text-center">'+h.quantidade+'</td><td>'+esc(h.responsavel||'')+'</td><td>'+esc(h.numeroOS||'')+'</td></tr>'
   ).join('');
+  window._dashUltMov = ult;
+}
+
+function showDashMovDetail(idx) {
+  if (window.innerWidth > 600) return;
+  const h = window._dashUltMov?.[idx];
+  if (!h) return;
+  const rows = [
+    ['Data/Hora', formatDate(h.dataHora)],
+    ['Tipo', h.tipo],
+    ['Código', h.codigo],
+    ['Descrição', h.descricao],
+    ['Quantidade', h.quantidade],
+    ['Responsável', h.responsavel || '--'],
+    ['Destino', h.destino || '--'],
+    ['OS', h.numeroOS || '--'],
+    ['Observação', h.observacao || '--'],
+    ['Saldo', h.saldoAnterior + ' → ' + h.saldoNovo]
+  ];
+  document.getElementById('hisPopupBody').innerHTML = rows.map(r =>
+    '<div class="his-popup-row"><span class="his-popup-label">'+r[0]+'</span><span class="his-popup-value">'+esc(String(r[1]))+'</span></div>'
+  ).join('');
+  document.getElementById('hisPopup').classList.add('show');
 }
 
 // ===== INVENTÁRIO =====
@@ -1125,11 +1209,22 @@ function sortBy(col) {
 
 // ===== MOVIMENTAÇÃO =====
 function toggleMov(tipo) {
+  if (tipo === 'novo' && !IS_ADMIN) {
+    toast('Apenas administradores podem cadastrar itens', 'error');
+    return;
+  }
   document.getElementById('movForm').style.display = (tipo==='novo') ? 'none' : 'block';
   document.getElementById('novoForm').style.display = (tipo==='novo') ? 'block' : 'none';
-  document.getElementById('togEntrada').className = 'toggle-btn' + (tipo==='entrada'?' active-entrada':'');
-  document.getElementById('togSaida').className = 'toggle-btn' + (tipo==='saida'?' active-saida':'');
-  document.getElementById('togNovo').className = 'toggle-btn' + (tipo==='novo'?' active-entrada':'');
+  // Usa classList em vez de className=... para preservar classes existentes (admin-only)
+  const btnEnt = document.getElementById('togEntrada');
+  const btnSai = document.getElementById('togSaida');
+  const btnNov = document.getElementById('togNovo');
+  btnEnt.classList.toggle('active-entrada', tipo==='entrada');
+  btnEnt.classList.remove('active-saida');
+  btnSai.classList.toggle('active-saida', tipo==='saida');
+  btnSai.classList.remove('active-entrada');
+  btnNov.classList.toggle('active-entrada', tipo==='novo');
+  btnNov.classList.remove('active-saida');
   movType = tipo;
   if (tipo !== 'novo') {
     document.getElementById('movTitle').textContent = tipo==='entrada' ? 'Entrada de Material' : 'Saída de Material';
@@ -1231,7 +1326,7 @@ async function confirmMovement() {
     clearMovement();
   } catch(e) {
     console.error('Erro na movimentação:', e);
-    toast('Erro ao registrar movimentação no servidor', 'error');
+    toast('Erro na movimentação: ' + (e.message || 'falha desconhecida'), 'error');
   } finally {
     btn.disabled = false;
   }
@@ -1274,6 +1369,10 @@ function getNvValue(id) {
 }
 
 async function addItem() {
+  if (!IS_ADMIN) {
+    toast('Apenas administradores podem cadastrar itens', 'error');
+    return;
+  }
   const btnAdd = document.getElementById('btnAddItem');
   if (btnAdd.disabled) return;
   const codigo = document.getElementById('nvCodigo').value.trim();
@@ -1292,34 +1391,27 @@ async function addItem() {
 
   btnAdd.disabled = true;
   try {
-    const { data: { user } } = await sb.auth.getUser();
-    const nome = user?.user_metadata?.nome || nameFromEmail(user.email);
-
-    const novoSnake = {
-      code: codigo, description: desc, product: produto,
-      subtype: document.getElementById('nvSubtipo').value.trim() || null,
-      manufacturer: fab, quantity: qtd,
-      min_stock: parseInt(document.getElementById('nvMinimo').value) || 0,
-      location: caixa, box_name: '',
-      unit: document.getElementById('nvUnid').value,
-      notes: document.getElementById('nvObs').value.trim(),
-      last_movement: now(),
-      created_by: nome
-    };
-
-    const { data: inserted, error } = await sb.from('inventory').insert(novoSnake).select().single();
-    if (error) throw error;
-
-    const novoCamel = toCamel(inserted);
-    ESTOQUE.push(novoCamel);
-
-    // Registrar entrada inicial no histórico
-    await sb.from('movements').insert({
-      moved_at: now(), code: codigo, description: desc,
-      type: 'ENTRADA', quantity: qtd, responsible: nome,
-      destination: destino, work_order: os, notes: 'Cadastro inicial',
-      previous_balance: 0, new_balance: qtd, user_id: user?.id
+    // RPC atomica: insere inventory + movements numa transacao (M3)
+    const { data: result, error } = await sb.rpc('add_inventory_item', {
+      p_code: codigo,
+      p_description: desc,
+      p_product: produto,
+      p_manufacturer: fab,
+      p_quantity: qtd,
+      p_location: caixa,
+      p_subtype: document.getElementById('nvSubtipo').value.trim() || null,
+      p_min_stock: parseInt(document.getElementById('nvMinimo').value) || 0,
+      p_unit: document.getElementById('nvUnid').value,
+      p_notes: document.getElementById('nvObs').value.trim(),
+      p_destination: destino,
+      p_work_order: os
     });
+    if (error) throw error;
+    if (result?.error) throw new Error(result.error);
+
+    // Recarregar o item inserido (com todos os campos defaults do DB)
+    const { data: inserted } = await sb.from('inventory').select('*').eq('id', result.id).single();
+    if (inserted) ESTOQUE.push(toCamel(inserted));
 
     saveToLocalStorage();
     updateDataLists();
@@ -1336,11 +1428,11 @@ async function addItem() {
     document.getElementById('nvGrpOS').style.display = 'block';
   } catch(e) {
     console.error('Erro ao adicionar item:', e);
-    toast('Erro ao adicionar item no servidor', 'error');
+    toast('Erro ao adicionar: ' + (e.message || 'falha desconhecida'), 'error');
   } finally { btnAdd.disabled = false; }
 }
 
-// ===== EDITAR ITEM =====
+// ===== EDITAR/VISUALIZAR ITEM =====
 function editItem(id) {
   const x = ESTOQUE.find(i => i.id === id);
   if (!x) return;
@@ -1354,12 +1446,26 @@ function editItem(id) {
   document.getElementById('edtMinimo').value = x.estoqueMinimo;
   document.getElementById('edtUnid').value = x.unidade;
   document.getElementById('edtObs').value = x.observacao || '';
-  document.getElementById('modalEditar').classList.add('show');
+
+  // Admin edita, user comum apenas visualiza
+  const modal = document.getElementById('modalEditar');
+  const title = modal.querySelector('.modal-header h3');
+  const saveBtn = document.getElementById('btnSaveEdit');
+  const inputs = modal.querySelectorAll('.modal-body input:not([type=hidden]), .modal-body textarea');
+  title.textContent = IS_ADMIN ? 'Editar Item' : 'Visualizar Item';
+  saveBtn.style.display = IS_ADMIN ? '' : 'none';
+  inputs.forEach(i => { i.readOnly = !IS_ADMIN; });
+
+  modal.classList.add('show');
 }
 
 function closeModal() { document.getElementById('modalEditar').classList.remove('show'); }
 
 async function saveEdit() {
+  if (!IS_ADMIN) {
+    toast('Apenas administradores podem editar itens', 'error');
+    return;
+  }
   const id = parseInt(document.getElementById('edtId').value);
   const x = ESTOQUE.find(i => i.id === id);
   if (!x) return;
@@ -1420,7 +1526,7 @@ async function saveEdit() {
     toast('Item atualizado', 'success');
   } catch(e) {
     console.error('Erro ao salvar edição:', e);
-    toast('Erro ao atualizar item no servidor', 'error');
+    toast('Erro ao atualizar: ' + (e.message || 'falha desconhecida'), 'error');
   }
 }
 
@@ -1509,6 +1615,54 @@ function renderConfig() {
     '<br>Cache local: '+(ls/1024).toFixed(1)+' KB';
 }
 
+// ===== USUARIOS E PERMISSOES (admin only) =====
+async function loadUserRoles() {
+  if (!IS_ADMIN) return;
+  const tbody = document.querySelector('#cfgRolesTable tbody');
+  const empty = document.getElementById('cfgRolesEmpty');
+  try {
+    const { data, error } = await sb.rpc('list_users_with_roles');
+    if (error) throw error;
+    if (!data || data.length === 0) {
+      tbody.innerHTML = '';
+      empty.style.display = 'block';
+      return;
+    }
+    empty.style.display = 'none';
+    tbody.innerHTML = data.map(u => {
+      const isAdmin = u.role === 'admin';
+      const btnLabel = isAdmin ? 'Rebaixar' : 'Promover';
+      const btnClass = isAdmin ? 'btn-outline' : 'btn-azul';
+      const disabled = u.is_self ? 'disabled title="Voce nao pode alterar seu proprio papel"' : '';
+      const selfTag = u.is_self ? ' <span style="font-size:10px;color:var(--texto3)">(voce)</span>' : '';
+      return '<tr>'+
+        '<td>'+esc(u.email)+selfTag+'</td>'+
+        '<td class="text-center"><span style="display:inline-block;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:600;background:'+(isAdmin?'var(--azul)':'var(--zebra)')+';color:'+(isAdmin?'#fff':'var(--texto2)')+'">'+esc(u.role)+'</span></td>'+
+        '<td class="text-center"><button class="btn '+btnClass+'" style="padding:4px 10px;font-size:11px" '+disabled+' onclick="toggleUserRole(\''+u.user_id+'\',\''+u.role+'\',\''+esc(u.email)+'\')">'+btnLabel+'</button></td>'+
+      '</tr>';
+    }).join('');
+  } catch (e) {
+    console.error('Erro ao listar usuarios:', e);
+    toast('Erro ao listar usuarios: ' + (e.message || 'falha desconhecida'), 'error');
+  }
+}
+
+async function toggleUserRole(userId, currentRole, email) {
+  const novo = currentRole === 'admin' ? 'user' : 'admin';
+  const acao = novo === 'admin' ? 'promover' : 'rebaixar';
+  if (!confirm('Tem certeza que deseja ' + acao + ' ' + email + ' para ' + novo + '?')) return;
+  try {
+    const { data, error } = await sb.rpc('set_user_role', { p_user_id: userId, p_role: novo });
+    if (error) throw error;
+    if (data?.error) { toast(data.error, 'error'); return; }
+    toast(email + ' agora e ' + novo, 'success');
+    await loadUserRoles();
+  } catch (e) {
+    console.error('Erro ao alterar role:', e);
+    toast('Erro ao alterar papel: ' + (e.message || 'falha desconhecida'), 'error');
+  }
+}
+
 async function saveMinimums() {
   const updates = [];
   document.querySelectorAll('#cfgMinTable input[data-id]').forEach(inp => {
@@ -1529,7 +1683,7 @@ async function saveMinimums() {
     toast('Estoque mínimo atualizado (' + updates.length + ' itens)', 'success');
   } catch(e) {
     console.error('Erro ao salvar mínimos:', e);
-    toast('Erro ao salvar estoque mínimo no servidor', 'error');
+    toast('Erro ao salvar mínimo: ' + (e.message || 'falha desconhecida'), 'error');
   }
 }
 

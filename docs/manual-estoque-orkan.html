@@ -1,0 +1,1561 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manual do Usuário - Estoque Engenharia Orkan</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --azul-principal: #0071CE;
+            --azul-medio: #0066B3;
+            --azul-escuro: #003087;
+            --azul-claro: #E3F2FD;
+            --verde: #4CAF50;
+            --verde-escuro: #2E7D32;
+            --verde-orkan: #6AB187;
+            --texto-principal: #333333;
+            --texto-secundario: #666666;
+            --texto-claro: #999999;
+            --fundo-branco: #FFFFFF;
+            --fundo-cinza: #F5F5F5;
+            --fundo-zebra: #F8F9FA;
+            --fundo-azul-claro: #F0F7FF;
+            --borda-clara: #DDDDDD;
+            --borda-media: #CCCCCC;
+            --alerta-fundo: #FFF8E1;
+            --alerta-borda: #FF9800;
+            --perigo-fundo: #FFEBEE;
+            --perigo-borda: #F44336;
+        }
+
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            font-size: 10.5pt;
+            line-height: 1.45;
+            color: var(--texto-principal);
+            background: #e0e0e0;
+        }
+
+        .print-btn {
+            position: fixed;
+            top: 15px;
+            right: 15px;
+            background: var(--azul-medio);
+            color: white;
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            cursor: pointer;
+            z-index: 1000;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            transition: all 0.2s;
+        }
+
+        .print-btn:hover {
+            background: var(--azul-escuro);
+            transform: scale(1.1);
+        }
+
+        .page {
+            width: 210mm;
+            min-height: 297mm;
+            margin: 0 auto 20px;
+            padding: 15mm 8mm;
+            background: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: relative;
+        }
+
+        .header-table {
+            width: 100%;
+            border: 1px solid var(--borda-clara);
+            border-collapse: collapse;
+            margin-bottom: 8mm;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .header-table td {
+            padding: 10px;
+            border: 1px solid var(--borda-clara);
+        }
+
+        .header-table .logo-cell {
+            background: white;
+        }
+
+        .logo-cell {
+            width: 18%;
+            text-align: center;
+            vertical-align: middle;
+            padding: 10px !important;
+        }
+
+        .logo-cell img {
+            height: 55px;
+            width: auto;
+            max-width: 100%;
+            display: block;
+            margin: 0 auto;
+            object-fit: contain;
+        }
+
+        .title-cell {
+            width: 44%;
+            text-align: center;
+            vertical-align: middle;
+            font-size: 11pt;
+            font-weight: bold;
+            color: var(--azul-escuro);
+        }
+
+        .info-cell {
+            width: 38%;
+            vertical-align: top;
+            background: linear-gradient(to right, var(--fundo-azul-claro), var(--fundo-branco));
+        }
+
+        .info-row {
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid var(--borda-clara);
+            padding: 5px 0;
+        }
+
+        .info-row:last-child {
+            border-bottom: none;
+        }
+
+        .info-label {
+            font-weight: bold;
+            min-width: 60px;
+            color: var(--texto-secundario);
+            font-size: 9pt;
+        }
+
+        .info-value {
+            flex: 1;
+            padding-left: 8px;
+            font-weight: 500;
+            font-size: 9pt;
+        }
+
+        .info-value.badge-revisao {
+            background: var(--azul-medio);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-weight: bold;
+            display: inline-block;
+            margin-left: 10px;
+        }
+
+        .project-title {
+            text-align: center;
+            margin-top: 25mm;
+            margin-bottom: 8mm;
+            font-size: 18pt;
+            font-weight: bold;
+            color: var(--azul-escuro);
+            padding: 12px 20px;
+            background: linear-gradient(to right, #f0f7ff, #ffffff);
+            border-left: 5px solid var(--azul-medio);
+            border-radius: 0 8px 8px 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .project-subtitle {
+            text-align: center;
+            font-size: 12pt;
+            color: var(--texto-secundario);
+            margin-bottom: 15mm;
+        }
+
+        .ficha-tecnica {
+            width: 80%;
+            margin: 0 auto 15mm;
+            border: 1px solid var(--borda-clara);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+        }
+
+        .ficha-tecnica .ficha-header {
+            background: var(--azul-escuro);
+            color: white;
+            padding: 8px 15px;
+            font-weight: bold;
+            font-size: 10pt;
+            text-align: center;
+        }
+
+        .ficha-tecnica .ficha-row {
+            display: flex;
+            border-bottom: 1px solid var(--borda-clara);
+            padding: 6px 15px;
+            font-size: 9.5pt;
+        }
+
+        .ficha-tecnica .ficha-row:last-child {
+            border-bottom: none;
+        }
+
+        .ficha-tecnica .ficha-row:nth-child(even) {
+            background: var(--fundo-zebra);
+        }
+
+        .ficha-tecnica .ficha-key {
+            font-weight: bold;
+            color: var(--azul-escuro);
+            min-width: 140px;
+        }
+
+        .ficha-tecnica .ficha-val {
+            flex: 1;
+        }
+
+        .revision-table {
+            width: calc(100% - 16mm);
+            border-collapse: collapse;
+            position: absolute;
+            bottom: 8mm;
+            left: 8mm;
+            font-size: 9pt;
+            border-radius: 6px;
+            overflow: hidden;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            border: 1px solid var(--borda-clara);
+        }
+
+        .revision-table th,
+        .revision-table td {
+            border: 1px solid var(--borda-clara);
+            padding: 5px;
+            text-align: center;
+        }
+
+        .revision-table th {
+            background: var(--azul-escuro);
+            color: white;
+            font-weight: bold;
+            font-size: 9pt;
+            padding: 8px 5px;
+        }
+
+        .revision-table td {
+            background-color: white;
+            font-size: 8.5pt;
+        }
+
+        .revision-table tr:nth-child(even) td {
+            background-color: var(--fundo-zebra);
+        }
+
+        .top-line {
+            height: 3px;
+            background-color: var(--azul-principal);
+            margin-bottom: 8mm;
+        }
+
+        .section {
+            margin-bottom: 18px;
+        }
+
+        .section-title {
+            font-weight: bold;
+            margin-bottom: 12px;
+            font-size: 12pt;
+            color: var(--azul-escuro);
+            border-bottom: 2px solid var(--azul-medio);
+            padding-bottom: 8px;
+        }
+
+        .section-content {
+            padding-left: 5px;
+        }
+
+        .section-content p {
+            margin-bottom: 10px;
+            text-align: justify;
+        }
+
+        .section-content ul, .section-content ol {
+            margin-left: 20px;
+            margin-bottom: 10px;
+        }
+
+        .section-content li {
+            margin-bottom: 6px;
+        }
+
+        .sub-title {
+            font-weight: bold;
+            font-size: 10.5pt;
+            color: var(--azul-escuro);
+            margin: 14px 0 8px;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 10px 0;
+            font-size: 9pt;
+            border-radius: 4px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+        }
+
+        .data-table th,
+        .data-table td {
+            border: 1px solid var(--borda-clara);
+            padding: 5px 8px;
+            text-align: left;
+            word-wrap: break-word;
+        }
+
+        .data-table th {
+            background: var(--azul-escuro);
+            color: white;
+            font-weight: bold;
+            text-align: center;
+            font-size: 9pt;
+            padding: 8px 5px;
+        }
+
+        .data-table tr:nth-child(even) {
+            background-color: var(--fundo-zebra);
+        }
+
+        .data-table td.param-name {
+            font-weight: bold;
+            color: var(--azul-escuro);
+        }
+
+        .alert-box {
+            padding: 10px 14px;
+            border-radius: 6px;
+            margin: 12px 0;
+            font-size: 9.5pt;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        .alert-box i {
+            font-size: 16px;
+            margin-top: 1px;
+        }
+
+        .alert-warning {
+            background: var(--alerta-fundo);
+            border-left: 4px solid var(--alerta-borda);
+        }
+
+        .alert-warning i {
+            color: var(--alerta-borda);
+        }
+
+        .alert-danger {
+            background: var(--perigo-fundo);
+            border-left: 4px solid var(--perigo-borda);
+        }
+
+        .alert-danger i {
+            color: var(--perigo-borda);
+        }
+
+        .alert-info {
+            background: var(--fundo-azul-claro);
+            border-left: 4px solid var(--azul-principal);
+        }
+
+        .alert-info i {
+            color: var(--azul-principal);
+        }
+
+        .alert-success {
+            background: #E8F5E9;
+            border-left: 4px solid var(--verde);
+        }
+
+        .alert-success i {
+            color: var(--verde);
+        }
+
+        .img-container {
+            margin: 12px 0;
+            text-align: center;
+        }
+
+        .img-container img {
+            max-width: 85%;
+            max-height: 160mm;
+            border: 2px solid var(--borda-media);
+            border-radius: 6px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+
+        .img-caption {
+            font-size: 8.5pt;
+            color: var(--texto-secundario);
+            margin-top: 6px;
+            font-style: italic;
+            text-align: center;
+        }
+
+        .flow-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0;
+            margin: 15px 0;
+        }
+
+        .flow-step {
+            width: 85%;
+            padding: 10px 16px;
+            border-radius: 8px;
+            font-size: 9.5pt;
+            text-align: center;
+            position: relative;
+        }
+
+        .flow-step.step-info {
+            background: var(--fundo-azul-claro);
+            border: 2px solid var(--azul-principal);
+            color: var(--azul-escuro);
+        }
+
+        .flow-step.step-success {
+            background: #E8F5E9;
+            border: 2px solid var(--verde);
+            color: var(--verde-escuro);
+        }
+
+        .flow-step.step-warning {
+            background: var(--alerta-fundo);
+            border: 2px solid var(--alerta-borda);
+            color: #E65100;
+        }
+
+        .flow-step.step-primary {
+            background: #E3F2FD;
+            border: 2px solid var(--azul-principal);
+            color: var(--azul-escuro);
+            font-weight: bold;
+        }
+
+        .flow-arrow {
+            font-size: 18px;
+            color: var(--texto-claro);
+            padding: 2px 0;
+        }
+
+        code {
+            background: var(--fundo-cinza);
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Consolas', 'Courier New', monospace;
+            font-size: 9pt;
+            color: #C62828;
+        }
+
+        .page-footer {
+            position: absolute;
+            bottom: 8mm;
+            right: 8mm;
+            font-size: 10pt;
+            color: var(--texto-principal);
+        }
+
+        .indice-title {
+            color: var(--azul-escuro);
+            font-size: 18pt;
+            margin-bottom: 20px;
+            font-weight: bold;
+            border-bottom: 3px solid var(--azul-medio);
+            padding-bottom: 10px;
+        }
+
+        .indice-list {
+            list-style: none;
+            counter-reset: section;
+        }
+
+        .indice-list > li {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: baseline;
+            padding: 8px 0;
+            border-bottom: 1px dotted var(--borda-clara);
+        }
+
+        .indice-list > li::before {
+            counter-increment: section;
+            content: counter(section) ".";
+            width: 25px;
+            font-weight: bold;
+            color: var(--azul-escuro);
+        }
+
+        .indice-list > li > a {
+            flex: 1;
+            color: var(--texto-principal);
+            text-decoration: none;
+        }
+
+        .indice-list > li > a:hover {
+            color: var(--azul-medio);
+        }
+
+        .page-num {
+            text-align: right;
+            min-width: 30px;
+            color: var(--texto-secundario);
+        }
+
+        .kbd {
+            display: inline-block;
+            background: #f4f4f4;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            padding: 1px 6px;
+            font-size: 8.5pt;
+            font-family: 'Consolas', monospace;
+            color: var(--texto-principal);
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        }
+
+        @media print {
+            @page {
+                size: A4 portrait;
+                margin: 0;
+            }
+
+            * {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+
+            html, body {
+                width: 210mm;
+                height: 297mm;
+                margin: 0;
+                padding: 0;
+                background: white;
+            }
+
+            body {
+                font-size: 9pt;
+                line-height: 1.3;
+            }
+
+            .print-btn {
+                display: none !important;
+            }
+
+            .page {
+                width: 210mm;
+                height: 297mm;
+                margin: 0;
+                padding: 15mm 12mm;
+                box-shadow: none;
+                page-break-after: always;
+            }
+
+            .header-table {
+                border-radius: 0;
+                box-shadow: none;
+            }
+
+            .project-title {
+                margin-top: 20mm;
+                font-size: 16pt;
+            }
+
+            .revision-table {
+                border-radius: 0;
+                box-shadow: none;
+                font-size: 8pt;
+            }
+
+            .revision-table th, .revision-table td {
+                padding: 4px;
+            }
+
+            .top-line {
+                margin-bottom: 5mm;
+            }
+
+            .section {
+                margin-bottom: 10px;
+            }
+
+            .section-title {
+                font-size: 11pt;
+                margin-bottom: 8px;
+                padding-bottom: 5px;
+            }
+
+            .section-content p {
+                margin-bottom: 6px;
+                font-size: 9pt;
+            }
+
+            .section-content li {
+                margin-bottom: 4px;
+                font-size: 9pt;
+            }
+
+            .data-table {
+                font-size: 7.5pt;
+                margin: 6px 0;
+                border-radius: 0;
+                box-shadow: none;
+            }
+
+            .data-table th {
+                font-size: 7pt;
+                padding: 3px;
+                background: var(--azul-escuro) !important;
+            }
+
+            .data-table td {
+                padding: 3px;
+            }
+
+            .data-table tr:hover {
+                background-color: transparent;
+            }
+
+            .alert-box {
+                padding: 6px 10px;
+                font-size: 8.5pt;
+            }
+
+            .page-footer {
+                font-size: 9pt;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <button class="print-btn" onclick="window.print()" title="Imprimir documento">
+        <i class="bi bi-printer"></i>
+    </button>
+
+    <!-- ===================================== -->
+    <!-- CAPA -->
+    <!-- ===================================== -->
+    <div class="page">
+        <table class="header-table">
+            <tr>
+                <td class="logo-cell">
+                    <img src="https://raw.githubusercontent.com/orkan-engenharia/publico/main/assets/logo-orkan.png"
+                         alt="Orkan">
+                </td>
+                <td class="title-cell">
+                    Manual do Usuário
+                </td>
+                <td class="info-cell">
+                    <div class="info-row">
+                        <span class="info-label">Projeto:</span>
+                        <span class="info-value">Estoque Engenharia</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Data:</span>
+                        <span class="info-value">14/04/2026</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Revisão:</span>
+                        <span class="info-value badge-revisao">00</span>
+                    </div>
+                </td>
+            </tr>
+        </table>
+
+        <div class="project-title">
+            Sistema de Gestão de Estoque
+        </div>
+        <div class="project-subtitle">
+            Manual do Usuário<br>
+            Engenharia &mdash; Orkan Automação Industrial
+        </div>
+
+        <div class="ficha-tecnica">
+            <div class="ficha-header">Informações do Sistema</div>
+            <div class="ficha-row">
+                <span class="ficha-key">Plataforma</span>
+                <span class="ficha-val">Web (navegador)</span>
+            </div>
+            <div class="ficha-row">
+                <span class="ficha-key">Acesso</span>
+                <span class="ficha-val"><a href="https://orkan-engenharia.github.io/estoque-orkan/" style="color:var(--azul-principal);text-decoration:none">orkan-engenharia.github.io/estoque-orkan</a></span>
+            </div>
+            <div class="ficha-row">
+                <span class="ficha-key">Dispositivos</span>
+                <span class="ficha-val">Computador, tablet e celular</span>
+            </div>
+            <div class="ficha-row">
+                <span class="ficha-key">Autenticação</span>
+                <span class="ficha-val">Email @orkan.com.br + senha</span>
+            </div>
+            <div class="ficha-row">
+                <span class="ficha-key">Banco de Dados</span>
+                <span class="ficha-val">Supabase (PostgreSQL) &mdash; tempo real</span>
+            </div>
+            <div class="ficha-row">
+                <span class="ficha-key">Versão</span>
+                <span class="ficha-val">2.0</span>
+            </div>
+        </div>
+
+        <table class="revision-table">
+            <thead>
+                <tr>
+                    <th style="width: 10%;">Revisão</th>
+                    <th style="width: 15%;">Data</th>
+                    <th style="width: 45%;">Descrição</th>
+                    <th style="width: 15%;">Elaborado</th>
+                    <th style="width: 15%;">Aprovado</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>00</td>
+                    <td>14/04/2026</td>
+                    <td>Emissão inicial</td>
+                    <td>Helena Alencar</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>01</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- ===================================== -->
+    <!-- ÍNDICE -->
+    <!-- ===================================== -->
+    <div class="page">
+        <div class="top-line"></div>
+
+        <h1 class="indice-title">Índice de Conteúdos</h1>
+
+        <nav>
+            <ol class="indice-list">
+                <li><a href="#introducao">Introdução</a><span class="page-num">2</span></li>
+                <li><a href="#acesso">Acesso ao Sistema</a><span class="page-num">3</span></li>
+                <li><a href="#recuperacao">Recuperação de Senha</a><span class="page-num">4</span></li>
+                <li><a href="#inventario">Inventário</a><span class="page-num">5</span></li>
+                <li><a href="#movimentacao">Movimentação</a><span class="page-num">6</span></li>
+                <li><a href="#historico">Histórico</a><span class="page-num">7</span></li>
+                <li><a href="#dashboard">Dashboard</a><span class="page-num">8</span></li>
+                <li><a href="#configuracoes">Configurações</a><span class="page-num">9</span></li>
+                <li><a href="#exportacao">Exportação de Dados</a><span class="page-num">10</span></li>
+                <li><a href="#mobile">Uso no Celular</a><span class="page-num">11</span></li>
+                <li><a href="#duvidas">Dúvidas Frequentes</a><span class="page-num">12</span></li>
+            </ol>
+        </nav>
+
+        <div class="page-footer">Página 1</div>
+    </div>
+
+    <!-- ===================================== -->
+    <!-- 1. INTRODUÇÃO -->
+    <!-- ===================================== -->
+    <div class="page">
+        <div class="top-line"></div>
+
+        <div class="section">
+            <div class="section-title" id="introducao">1. Introdução</div>
+            <div class="section-content">
+                <p>O <strong>Sistema de Gestão de Estoque</strong> da Engenharia Orkan é uma aplicação web desenvolvida para controlar o inventário de materiais utilizados nos projetos de automação industrial.</p>
+
+                <p>O sistema permite o registro de entradas e saídas de materiais, consulta de saldos em tempo real, acompanhamento do histórico de movimentações e visualização de indicadores no dashboard.</p>
+
+                <div class="sub-title">Funcionalidades Principais</div>
+                <ul>
+                    <li><strong>Inventário</strong> &mdash; consulta de todos os itens cadastrados (edição/cadastro requer administrador)</li>
+                    <li><strong>Movimentação</strong> &mdash; registro de entradas e saídas de materiais (disponível para todos os usuários)</li>
+                    <li><strong>Histórico</strong> &mdash; consulta de todas as movimentações realizadas</li>
+                    <li><strong>Dashboard</strong> &mdash; indicadores e alertas de estoque</li>
+                    <li><strong>Configurações</strong> &mdash; estoque mínimo, gestão de usuários e informações do sistema (acesso restrito a administradores)</li>
+                    <li><strong>Exportação</strong> &mdash; download dos dados em JSON, CSV ou Excel (apenas administradores)</li>
+                </ul>
+
+                <div class="sub-title">Requisitos</div>
+                <ul>
+                    <li>Navegador atualizado (Chrome, Edge, Firefox ou Safari)</li>
+                    <li>Conexão com a internet</li>
+                    <li>Email corporativo <code>@orkan.com.br</code></li>
+                </ul>
+
+                <div class="alert-info alert-box">
+                    <i class="bi bi-info-circle-fill"></i>
+                    <div>
+                        O sistema funciona em <strong>tempo real</strong>: alterações feitas por um usuário são refletidas automaticamente para todos os demais que estiverem online.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="page-footer">Página 2</div>
+    </div>
+
+    <!-- ===================================== -->
+    <!-- 2. ACESSO AO SISTEMA -->
+    <!-- ===================================== -->
+    <div class="page">
+        <div class="top-line"></div>
+
+        <div class="section">
+            <div class="section-title" id="acesso">2. Acesso ao Sistema</div>
+            <div class="section-content">
+
+                <div class="img-container">
+                    <img src="img/01-login.png" alt="Tela de Login">
+                    <div class="img-caption">Figura 1 &mdash; Tela de login do sistema</div>
+                </div>
+
+                <div class="sub-title">2.1 Primeiro Acesso (Criar Conta)</div>
+                <p>Para utilizar o sistema pela primeira vez, é necessário criar uma conta:</p>
+                <ol>
+                    <li>Acesse o endereço do sistema no navegador</li>
+                    <li>Clique na aba <strong>Criar conta</strong></li>
+                    <li>Preencha os campos:
+                        <ul>
+                            <li><strong>Nome</strong> &mdash; seu nome completo</li>
+                            <li><strong>Email</strong> &mdash; deve ser <code>@orkan.com.br</code></li>
+                            <li><strong>Senha</strong> &mdash; mínimo 6 caracteres</li>
+                            <li><strong>Confirmar senha</strong> &mdash; repita a senha</li>
+                        </ul>
+                    </li>
+                    <li>Clique em <strong>Cadastrar</strong></li>
+                    <li>Verifique seu email e clique no link de confirmação</li>
+                    <li>Após confirmar, acesse o sistema com email e senha</li>
+                </ol>
+
+                <div class="img-container">
+                    <img src="img/02-cadastro.png" alt="Tela de Cadastro">
+                    <div class="img-caption">Figura 2 &mdash; Tela de criação de conta</div>
+                </div>
+
+                <div class="alert-warning alert-box">
+                    <i class="bi bi-exclamation-triangle-fill"></i>
+                    <div>
+                        Somente emails com domínio <code>@orkan.com.br</code> são aceitos para cadastro.
+                    </div>
+                </div>
+
+                <div class="sub-title">2.2 Login</div>
+                <p>Após o cadastro confirmado:</p>
+                <ol>
+                    <li>Acesse o endereço do sistema</li>
+                    <li>Na aba <strong>Entrar</strong>, informe seu email e senha</li>
+                    <li>Clique em <strong>Entrar</strong></li>
+                </ol>
+
+                <div class="sub-title">2.3 Sessão e Inatividade</div>
+                <p>Por segurança, a sessão expira automaticamente após <strong>30 minutos de inatividade</strong>. Um minuto antes da expiração, o sistema exibe um aviso perguntando se você deseja continuar.</p>
+
+                <div class="sub-title">2.4 Logout</div>
+                <p>Para sair do sistema, clique no botão <strong>Sair</strong> no canto superior direito da tela (no computador) ou na barra de navegação inferior (no celular). Ao sair, a sessão é encerrada por completo &mdash; o próximo usuário a entrar começa com o sistema limpo, sem rastros da sessão anterior.</p>
+
+                <div class="sub-title">2.5 Tipos de Usuário e Permissões</div>
+                <p>O sistema possui dois tipos de usuário, com permissões distintas:</p>
+                <ul>
+                    <li><strong>Usuário Comum</strong> &mdash; padrão para todo novo cadastro. Pode consultar inventário, registrar entradas e saídas de material, consultar histórico e dashboard.</li>
+                    <li><strong>Administrador</strong> &mdash; além das ações acima, pode cadastrar novos itens, editar itens existentes, acessar Configurações (estoque mínimo, exportação, usuários) e promover/rebaixar outros usuários.</li>
+                </ul>
+
+                <div class="alert-info alert-box">
+                    <i class="bi bi-info-circle-fill"></i>
+                    <div>
+                        Quando você cria uma conta pela primeira vez, é cadastrada automaticamente como <strong>Usuário Comum</strong>. Um administrador precisa promovê-la manualmente se necessário &mdash; veja a seção <strong>8. Configurações</strong>.
+                    </div>
+                </div>
+
+                <p>A tabela abaixo resume o que cada tipo de usuário pode fazer:</p>
+                <table style="width:100%;border-collapse:collapse;font-size:12pt;margin-top:8px">
+                    <thead>
+                        <tr style="background:#f0f0f0">
+                            <th style="padding:6px;border:1px solid #ccc;text-align:left">Ação</th>
+                            <th style="padding:6px;border:1px solid #ccc;text-align:center">Usuário Comum</th>
+                            <th style="padding:6px;border:1px solid #ccc;text-align:center">Administrador</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td style="padding:6px;border:1px solid #ccc">Consultar inventário</td><td style="padding:6px;border:1px solid #ccc;text-align:center">Sim</td><td style="padding:6px;border:1px solid #ccc;text-align:center">Sim</td></tr>
+                        <tr><td style="padding:6px;border:1px solid #ccc">Registrar entrada/saída</td><td style="padding:6px;border:1px solid #ccc;text-align:center">Sim</td><td style="padding:6px;border:1px solid #ccc;text-align:center">Sim</td></tr>
+                        <tr><td style="padding:6px;border:1px solid #ccc">Ver histórico e dashboard</td><td style="padding:6px;border:1px solid #ccc;text-align:center">Sim</td><td style="padding:6px;border:1px solid #ccc;text-align:center">Sim</td></tr>
+                        <tr><td style="padding:6px;border:1px solid #ccc">Visualizar detalhes do item (modal)</td><td style="padding:6px;border:1px solid #ccc;text-align:center">Sim (somente leitura)</td><td style="padding:6px;border:1px solid #ccc;text-align:center">Sim (pode editar)</td></tr>
+                        <tr><td style="padding:6px;border:1px solid #ccc">Cadastrar novo item</td><td style="padding:6px;border:1px solid #ccc;text-align:center">Não</td><td style="padding:6px;border:1px solid #ccc;text-align:center">Sim</td></tr>
+                        <tr><td style="padding:6px;border:1px solid #ccc">Editar item existente</td><td style="padding:6px;border:1px solid #ccc;text-align:center">Não</td><td style="padding:6px;border:1px solid #ccc;text-align:center">Sim</td></tr>
+                        <tr><td style="padding:6px;border:1px solid #ccc">Acessar Configurações</td><td style="padding:6px;border:1px solid #ccc;text-align:center">Não</td><td style="padding:6px;border:1px solid #ccc;text-align:center">Sim</td></tr>
+                        <tr><td style="padding:6px;border:1px solid #ccc">Promover/rebaixar usuários</td><td style="padding:6px;border:1px solid #ccc;text-align:center">Não</td><td style="padding:6px;border:1px solid #ccc;text-align:center">Sim</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="page-footer">Página 3</div>
+    </div>
+
+    <!-- ===================================== -->
+    <!-- 3. RECUPERAÇÃO DE SENHA -->
+    <!-- ===================================== -->
+    <div class="page">
+        <div class="top-line"></div>
+
+        <div class="section">
+            <div class="section-title" id="recuperacao">3. Recuperação de Senha</div>
+            <div class="section-content">
+                <p>Caso esqueça sua senha, o sistema permite redefini-la por email.</p>
+
+                <div class="img-container">
+                    <img src="img/03-esqueci-senha.png" alt="Tela de Recuperação de Senha">
+                    <div class="img-caption">Figura 3 &mdash; Formulário de recuperação de senha</div>
+                </div>
+
+                <div class="sub-title">3.1 Solicitar Redefinição</div>
+                <ol>
+                    <li>Na tela de login, clique em <strong>Esqueci minha senha</strong></li>
+                    <li>Informe seu email <code>@orkan.com.br</code></li>
+                    <li>Clique em <strong>Enviar link</strong></li>
+                    <li>Verifique sua caixa de entrada (e também a pasta de spam)</li>
+                </ol>
+
+                <div class="sub-title">3.2 Redefinir a Senha</div>
+                <ol>
+                    <li>Abra o email recebido com o assunto <strong>Reset Your Password</strong></li>
+                    <li>Clique no link <strong>Redefinir minha senha</strong></li>
+                    <li>O sistema abrirá o formulário de nova senha</li>
+                    <li>Digite a nova senha (mínimo 6 caracteres)</li>
+                    <li>Confirme a nova senha</li>
+                    <li>Clique em <strong>Redefinir senha</strong></li>
+                </ol>
+
+                <div class="alert-warning alert-box">
+                    <i class="bi bi-exclamation-triangle-fill"></i>
+                    <div>
+                        O link de redefinição expira em <strong>24 horas</strong>. Caso expire, solicite um novo link.
+                    </div>
+                </div>
+
+                <div class="alert-info alert-box">
+                    <i class="bi bi-info-circle-fill"></i>
+                    <div>
+                        Se o campo de email já estiver preenchido na tela de login, ele será copiado automaticamente para o formulário de recuperação.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="page-footer">Página 4</div>
+    </div>
+
+    <!-- ===================================== -->
+    <!-- 4. INVENTÁRIO -->
+    <!-- ===================================== -->
+    <div class="page">
+        <div class="top-line"></div>
+
+        <div class="section">
+            <div class="section-title" id="inventario">4. Inventário</div>
+            <div class="section-content">
+                <p>A aba <strong>Inventário</strong> exibe todos os itens cadastrados no estoque. É a tela principal do sistema.</p>
+
+                <div class="img-container">
+                    <img src="img/04-inventario.png" alt="Tela de Inventário">
+                    <div class="img-caption">Figura 4 &mdash; Tela de inventário com lista de itens</div>
+                </div>
+
+                <div class="sub-title">4.1 Campos da Tabela</div>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Campo</th>
+                            <th>Descrição</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="param-name">Código</td>
+                            <td>Código do fabricante do material</td>
+                        </tr>
+                        <tr>
+                            <td class="param-name">Descrição</td>
+                            <td>Nome ou modelo do material</td>
+                        </tr>
+                        <tr>
+                            <td class="param-name">Produto</td>
+                            <td>Tipo do produto (Borne, Relé, Cabo, etc.)</td>
+                        </tr>
+                        <tr>
+                            <td class="param-name">Fabricante</td>
+                            <td>Fabricante do material</td>
+                        </tr>
+                        <tr>
+                            <td class="param-name">Qtd</td>
+                            <td>Quantidade atual em estoque</td>
+                        </tr>
+                        <tr>
+                            <td class="param-name">Unidade</td>
+                            <td>Unidade de medida (peça, metro, rolo, etc.)</td>
+                        </tr>
+                        <tr>
+                            <td class="param-name">Caixa</td>
+                            <td>Localização física do material no almoxarifado</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="sub-title">4.2 Busca e Filtros</div>
+                <p>A barra de busca localizada acima da tabela permite pesquisar em <strong>todos os campos</strong> simultaneamente. Basta digitar qualquer termo (código, descrição, fabricante, etc.).</p>
+                <p>Além da busca textual, estão disponíveis filtros por:</p>
+                <ul>
+                    <li><strong>Fabricante</strong> &mdash; selecione o fabricante desejado</li>
+                    <li><strong>Produto</strong> &mdash; filtre por tipo de produto</li>
+                    <li><strong>Caixa</strong> &mdash; filtre por localização física</li>
+                    <li><strong>Estoque</strong> &mdash; filtre por situação (normal, baixo, zerado)</li>
+                </ul>
+                <p>O botão <strong>Limpar</strong> remove todos os filtros aplicados de uma vez.</p>
+
+                <div class="sub-title">4.3 Ordenação</div>
+                <p>Clique no cabeçalho de qualquer coluna para ordenar a tabela. Clique novamente para inverter a ordem (crescente/decrescente).</p>
+
+                <div class="sub-title">4.4 Visualizar / Editar Item</div>
+                <p>Clique em qualquer linha da tabela para abrir o <strong>modal do item</strong>. O comportamento depende do seu tipo de usuário:</p>
+                <ul>
+                    <li><strong>Administrador</strong> &mdash; abre em modo <strong>Editar Item</strong>. Permite alterar descrição, produto, subtipo, fabricante, localização, caixa, unidade e observações. Clique em <strong>Salvar e Gravar</strong> para confirmar.</li>
+                    <li><strong>Usuário Comum</strong> &mdash; abre em modo <strong>Visualizar Item</strong> (somente leitura). Os campos ficam com fundo cinza e o botão de salvar não aparece.</li>
+                </ul>
+
+                <div class="alert-danger alert-box">
+                    <i class="bi bi-exclamation-octagon-fill"></i>
+                    <div>
+                        A quantidade em estoque <strong>não pode ser alterada</strong> pelo modal de edição. Para alterar a quantidade, utilize a aba <strong>Movimentação</strong>.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="page-footer">Página 5</div>
+    </div>
+
+    <!-- ===================================== -->
+    <!-- 5. MOVIMENTAÇÃO -->
+    <!-- ===================================== -->
+    <div class="page">
+        <div class="top-line"></div>
+
+        <div class="section">
+            <div class="section-title" id="movimentacao">5. Movimentação</div>
+            <div class="section-content">
+                <p>A aba <strong>Movimentação</strong> é utilizada para registrar entradas e saídas de materiais do estoque.</p>
+
+                <div class="img-container">
+                    <img src="img/05-movimentacao.png" alt="Tela de Movimentação">
+                    <div class="img-caption">Figura 5 &mdash; Formulário de entrada de material</div>
+                </div>
+
+                <div class="sub-title">5.1 Fluxo de Movimentação</div>
+                <div class="flow-container">
+                    <div class="flow-step step-primary">1. Buscar e selecionar o item</div>
+                    <div class="flow-arrow"><i class="bi bi-arrow-down"></i></div>
+                    <div class="flow-step step-info">2. Escolher tipo: Entrada ou Saída</div>
+                    <div class="flow-arrow"><i class="bi bi-arrow-down"></i></div>
+                    <div class="flow-step step-info">3. Informar quantidade</div>
+                    <div class="flow-arrow"><i class="bi bi-arrow-down"></i></div>
+                    <div class="flow-step step-warning">4. Preencher campos obrigatórios</div>
+                    <div class="flow-arrow"><i class="bi bi-arrow-down"></i></div>
+                    <div class="flow-step step-success">5. Confirmar a movimentação</div>
+                </div>
+
+                <div class="sub-title">5.2 Campos da Movimentação</div>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Campo</th>
+                            <th>Tipo</th>
+                            <th>Descrição</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="param-name">Item</td>
+                            <td>Obrigatório</td>
+                            <td>Busque e selecione o item na lista</td>
+                        </tr>
+                        <tr>
+                            <td class="param-name">Tipo</td>
+                            <td>Obrigatório</td>
+                            <td>Entrada (adiciona ao estoque) ou Saída (remove do estoque)</td>
+                        </tr>
+                        <tr>
+                            <td class="param-name">Quantidade</td>
+                            <td>Obrigatório</td>
+                            <td>Quantidade a movimentar (deve ser maior que zero)</td>
+                        </tr>
+                        <tr>
+                            <td class="param-name">Destino</td>
+                            <td>Obrigatório (saída)</td>
+                            <td>Local de destino do material na saída</td>
+                        </tr>
+                        <tr>
+                            <td class="param-name">OS</td>
+                            <td>Condicional</td>
+                            <td>Número da Ordem de Serviço (exatamente 5 dígitos). Obrigatório quando o destino é "Projeto/OS" ou "Devolução de projeto"</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="alert-warning alert-box">
+                    <i class="bi bi-exclamation-triangle-fill"></i>
+                    <div>
+                        Não é possível realizar uma saída com quantidade superior ao saldo atual do item. O sistema bloqueará a operação e exibirá uma mensagem de erro.
+                    </div>
+                </div>
+
+                <div class="alert-info alert-box">
+                    <i class="bi bi-info-circle-fill"></i>
+                    <div>
+                        O campo <strong>OS</strong> aparece automaticamente quando o destino é <strong>Projeto/OS</strong> ou <strong>Devolução de projeto</strong>. Aceita apenas 5 dígitos numéricos (ex: <code>12345</code>).
+                    </div>
+                </div>
+
+                <div class="sub-title">5.3 Responsável</div>
+                <p>O campo de responsável é preenchido automaticamente com o nome do usuário logado (extraído do email de cadastro). Não é possível alterá-lo manualmente &mdash; o servidor ignora qualquer tentativa de informar outro nome, garantindo a rastreabilidade das movimentações.</p>
+
+                <div class="sub-title">5.4 Cadastrar Novo Item (Administrador)</div>
+                <p>O botão <strong>Novo Item</strong>, disponível ao lado de Entrada e Saída na aba Movimentação, permite cadastrar um item que ainda não existe no estoque. Ao clicar, abre o formulário com os campos de identificação (código, descrição, produto, fabricante, caixa) e quantidade inicial.</p>
+                <p>O cadastro já registra o saldo inicial como uma movimentação de <strong>Entrada</strong> no histórico, com observação "Cadastro inicial".</p>
+
+                <div class="alert-info alert-box">
+                    <i class="bi bi-info-circle-fill"></i>
+                    <div>
+                        O botão <strong>Novo Item</strong> só aparece para usuários com papel de <strong>Administrador</strong>. Usuários comuns não visualizam essa opção.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="page-footer">Página 6</div>
+    </div>
+
+    <!-- ===================================== -->
+    <!-- 6. HISTÓRICO -->
+    <!-- ===================================== -->
+    <div class="page">
+        <div class="top-line"></div>
+
+        <div class="section">
+            <div class="section-title" id="historico">6. Histórico</div>
+            <div class="section-content">
+                <p>A aba <strong>Histórico</strong> apresenta o registro completo de todas as movimentações realizadas no sistema, em ordem cronológica (mais recentes primeiro).</p>
+
+                <div class="img-container">
+                    <img src="img/06-historico.png" alt="Tela de Histórico">
+                    <div class="img-caption">Figura 6 &mdash; Histórico de movimentações com filtros</div>
+                </div>
+
+                <div class="sub-title">6.1 Campos do Histórico</div>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Campo</th>
+                            <th>Descrição</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="param-name">Data</td>
+                            <td>Data e hora da movimentação</td>
+                        </tr>
+                        <tr>
+                            <td class="param-name">Tipo</td>
+                            <td>Entrada ou Saída</td>
+                        </tr>
+                        <tr>
+                            <td class="param-name">Código</td>
+                            <td>Código do item movimentado</td>
+                        </tr>
+                        <tr>
+                            <td class="param-name">Descrição</td>
+                            <td>Nome do item</td>
+                        </tr>
+                        <tr>
+                            <td class="param-name">Qtd</td>
+                            <td>Quantidade movimentada</td>
+                        </tr>
+                        <tr>
+                            <td class="param-name">Responsável</td>
+                            <td>Quem realizou a movimentação</td>
+                        </tr>
+                        <tr>
+                            <td class="param-name">Destino</td>
+                            <td>Local de destino (apenas em saídas)</td>
+                        </tr>
+                        <tr>
+                            <td class="param-name">OS</td>
+                            <td>Número da Ordem de Serviço (se informado)</td>
+                        </tr>
+                        <tr>
+                            <td class="param-name">Saldo</td>
+                            <td>Saldo anterior e novo saldo após a movimentação</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="sub-title">6.2 Filtros do Histórico</div>
+                <p>O histórico possui filtros avançados para facilitar a consulta:</p>
+                <ul>
+                    <li><strong>Busca textual</strong> &mdash; pesquisa em todos os campos</li>
+                    <li><strong>Tipo</strong> &mdash; filtrar por Entrada ou Saída</li>
+                    <li><strong>Responsável</strong> &mdash; filtrar por quem realizou</li>
+                    <li><strong>Data início / Data fim</strong> &mdash; filtrar por período</li>
+                    <li><strong>OS</strong> &mdash; filtrar por número de Ordem de Serviço</li>
+                </ul>
+                <p>O botão <strong>Limpar</strong> remove todos os filtros aplicados.</p>
+            </div>
+        </div>
+
+        <div class="page-footer">Página 7</div>
+    </div>
+
+    <!-- ===================================== -->
+    <!-- 7. DASHBOARD -->
+    <!-- ===================================== -->
+    <div class="page">
+        <div class="top-line"></div>
+
+        <div class="section">
+            <div class="section-title" id="dashboard">7. Dashboard</div>
+            <div class="section-content">
+                <p>A aba <strong>Dashboard</strong> apresenta uma visão geral do estoque com indicadores visuais.</p>
+
+                <div class="img-container">
+                    <img src="img/07-dashboard.png" alt="Tela de Dashboard">
+                    <div class="img-caption">Figura 7 &mdash; Dashboard com indicadores e gráficos</div>
+                </div>
+
+                <div class="sub-title">7.1 Cards de Indicadores</div>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Indicador</th>
+                            <th>Descrição</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="param-name">Total de Itens</td>
+                            <td>Quantidade de itens diferentes cadastrados no estoque</td>
+                        </tr>
+                        <tr>
+                            <td class="param-name">Total em Estoque</td>
+                            <td>Soma de todas as quantidades de todos os itens</td>
+                        </tr>
+                        <tr>
+                            <td class="param-name">Estoque Baixo</td>
+                            <td>Itens com quantidade abaixo do estoque mínimo configurado</td>
+                        </tr>
+                        <tr>
+                            <td class="param-name">Sem Estoque</td>
+                            <td>Itens com quantidade zerada</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="sub-title">7.2 Alertas</div>
+                <p>Itens com estoque baixo ou zerado são destacados no dashboard com alertas visuais, permitindo ação rápida. Ao clicar em um item com alerta, o sistema direciona para a aba de movimentação para facilitar a reposição.</p>
+
+                <div class="alert-success alert-box">
+                    <i class="bi bi-check-circle-fill"></i>
+                    <div>
+                        Configure o <strong>estoque mínimo</strong> de cada item na aba Configurações para que os alertas funcionem corretamente.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="page-footer">Página 8</div>
+    </div>
+
+    <!-- ===================================== -->
+    <!-- 8. CONFIGURAÇÕES -->
+    <!-- ===================================== -->
+    <div class="page">
+        <div class="top-line"></div>
+
+        <div class="section">
+            <div class="section-title" id="configuracoes">8. Configurações</div>
+            <div class="section-content">
+                <p>A aba <strong>Configurações</strong> permite ajustar parâmetros do sistema, gerenciar usuários e consultar informações técnicas.</p>
+
+                <div class="alert-warning alert-box">
+                    <i class="bi bi-exclamation-triangle-fill"></i>
+                    <div>
+                        O acesso à aba <strong>Configurações</strong> é restrito a usuários com papel de <strong>Administrador</strong>. Para usuários comuns, a aba não aparece no menu.
+                    </div>
+                </div>
+
+                <div class="img-container">
+                    <img src="img/08-configuracoes.png" alt="Tela de Configurações">
+                    <div class="img-caption">Figura 8 &mdash; Configurações, exportação e estoque mínimo</div>
+                </div>
+
+                <div class="sub-title">8.1 Backup e Exportação</div>
+                <p>Três botões permitem exportar todo o inventário para diferentes formatos:</p>
+                <ul>
+                    <li><strong>Exportar Backup JSON</strong> &mdash; útil para restaurar em outro ambiente</li>
+                    <li><strong>Exportar CSV</strong> &mdash; abrir no Excel ou Google Sheets</li>
+                    <li><strong>Exportar Excel</strong> &mdash; planilha XLSX pronta para uso</li>
+                </ul>
+
+                <div class="sub-title">8.2 Estoque Mínimo</div>
+                <p>Nesta seção é possível definir a quantidade mínima de cada item. Quando o saldo ficar abaixo desse valor, o item aparecerá nos alertas do dashboard.</p>
+                <p>Para alterar o estoque mínimo:</p>
+                <ol>
+                    <li>Localize o item desejado (utilize a busca se necessário)</li>
+                    <li>Altere o valor na coluna <strong>Mínimo</strong></li>
+                    <li>Clique em <strong>Salvar Mínimos</strong> para confirmar</li>
+                </ol>
+
+                <div class="sub-title">8.3 Usuários e Permissões</div>
+                <p>Esta seção lista todos os usuários cadastrados no sistema com seus papéis (administrador ou usuário comum). O administrador pode promover ou rebaixar outros usuários com um clique.</p>
+                <p>Como promover um usuário:</p>
+                <ol>
+                    <li>Localize o usuário na tabela</li>
+                    <li>Clique em <strong>Promover</strong> (aparece ao lado de usuários comuns)</li>
+                    <li>Confirme a ação no diálogo que aparece</li>
+                </ol>
+                <p>Para rebaixar um administrador, o processo é o mesmo &mdash; o botão muda para <strong>Rebaixar</strong>.</p>
+
+                <div class="alert-info alert-box">
+                    <i class="bi bi-info-circle-fill"></i>
+                    <div>
+                        <strong>Regras de segurança:</strong>
+                        <ul style="margin:4px 0 0 0">
+                            <li>Você não pode rebaixar a si mesmo (o botão da sua linha fica desabilitado, com indicador "voce")</li>
+                            <li>O sistema não permite rebaixar o último administrador &mdash; promova outro usuário antes, caso necessário</li>
+                            <li>Apenas administradores visualizam ou alteram papéis</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="sub-title">8.4 Informações do Sistema</div>
+                <p>Exibe dados técnicos como versão do sistema, quantidade de itens cadastrados, total de movimentações e tamanho do cache local.</p>
+            </div>
+        </div>
+
+        <div class="page-footer">Página 9</div>
+    </div>
+
+    <!-- ===================================== -->
+    <!-- 9. EXPORTAÇÃO DE DADOS -->
+    <!-- ===================================== -->
+    <div class="page">
+        <div class="top-line"></div>
+
+        <div class="section">
+            <div class="section-title" id="exportacao">9. Exportação de Dados</div>
+            <div class="section-content">
+                <p>O sistema permite exportar os dados do estoque e do histórico para uso externo. A exportação é feita pela aba <strong>Configurações</strong> (ver seção 8.1) e está disponível apenas para administradores.</p>
+
+                <div class="sub-title">9.1 Formatos Disponíveis</div>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Formato</th>
+                            <th>Extensão</th>
+                            <th>Uso Recomendado</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="param-name">JSON</td>
+                            <td>.json</td>
+                            <td>Backup ou integração com outros sistemas</td>
+                        </tr>
+                        <tr>
+                            <td class="param-name">CSV</td>
+                            <td>.csv</td>
+                            <td>Importação em planilhas (Excel, Google Sheets)</td>
+                        </tr>
+                        <tr>
+                            <td class="param-name">Excel</td>
+                            <td>.xlsx</td>
+                            <td>Relatórios e análises detalhadas</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="sub-title">9.2 Como Exportar</div>
+                <ol>
+                    <li>Na aba <strong>Inventário</strong>, localize os botões de exportação</li>
+                    <li>Clique no formato desejado (JSON, CSV ou Excel)</li>
+                    <li>O arquivo será baixado automaticamente</li>
+                </ol>
+
+                <div class="alert-info alert-box">
+                    <i class="bi bi-info-circle-fill"></i>
+                    <div>
+                        A exportação em <strong>Excel</strong> inclui duas abas: uma com o inventário completo e outra com o histórico de movimentações.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="page-footer">Página 10</div>
+    </div>
+
+    <!-- ===================================== -->
+    <!-- 10. USO NO CELULAR -->
+    <!-- ===================================== -->
+    <div class="page">
+        <div class="top-line"></div>
+
+        <div class="section">
+            <div class="section-title" id="mobile">10. Uso no Celular</div>
+            <div class="section-content">
+                <p>O sistema é totalmente responsivo e pode ser utilizado em celulares e tablets. A interface se adapta automaticamente ao tamanho da tela.</p>
+
+                <div class="sub-title">10.1 Diferenças no Celular</div>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Elemento</th>
+                            <th>Computador</th>
+                            <th>Celular</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="param-name">Navegação</td>
+                            <td>Abas no topo da tela</td>
+                            <td>Barra de navegação na parte inferior</td>
+                        </tr>
+                        <tr>
+                            <td class="param-name">Tabelas</td>
+                            <td>Todas as colunas visíveis</td>
+                            <td>Colunas compactas (principais visíveis)</td>
+                        </tr>
+                        <tr>
+                            <td class="param-name">Modal de Edição</td>
+                            <td>Janela centralizada</td>
+                            <td>Tela cheia (fullscreen)</td>
+                        </tr>
+                        <tr>
+                            <td class="param-name">Filtros de Data</td>
+                            <td>Campos lado a lado</td>
+                            <td>Campos lado a lado (compactos)</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="sub-title">10.2 Instalar no Android (Chrome)</div>
+                <ol>
+                    <li>Acesse o sistema pelo <strong>Chrome</strong></li>
+                    <li>Toque nos <strong>3 pontinhos</strong> (menu no canto superior direito)</li>
+                    <li>Toque em <strong>Instalar</strong> ou <strong>Adicionar à tela inicial</strong></li>
+                    <li>Confirme tocando em <strong>Instalar</strong></li>
+                </ol>
+                <p>O app aparecerá na tela inicial com o ícone Orkan e abrirá em tela cheia, como um app nativo.</p>
+
+                <div class="sub-title">10.3 Instalar no iPhone (Safari)</div>
+                <ol>
+                    <li>Acesse o sistema pelo <strong>Safari</strong> (não funciona pelo Chrome do iPhone)</li>
+                    <li>Toque no botão <strong>Compartilhar</strong> (ícone de quadrado com seta para cima)</li>
+                    <li>Role para baixo e toque em <strong>Adicionar à Tela de Início</strong></li>
+                    <li>Confirme o nome e toque em <strong>Adicionar</strong></li>
+                </ol>
+                <p>O app aparecerá na tela inicial e abrirá em tela cheia, sem a barra do Safari.</p>
+
+                <div class="alert-warning alert-box">
+                    <i class="bi bi-exclamation-triangle-fill"></i>
+                    <div>
+                        No iPhone, utilize o <strong>Safari</strong> para instalar. O Chrome do iPhone não suporta a instalação de apps na tela inicial.
+                    </div>
+                </div>
+
+                <div class="alert-info alert-box">
+                    <i class="bi bi-info-circle-fill"></i>
+                    <div>
+                        A barra de navegação inferior no celular exibe ícones para cada aba, além do botão <strong>Sair</strong> para encerrar a sessão.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="page-footer">Página 11</div>
+    </div>
+
+    <!-- ===================================== -->
+    <!-- 11. DÚVIDAS FREQUENTES -->
+    <!-- ===================================== -->
+    <div class="page">
+        <div class="top-line"></div>
+
+        <div class="section">
+            <div class="section-title" id="duvidas">11. Dúvidas Frequentes</div>
+            <div class="section-content">
+
+                <div class="sub-title">Não recebi o email de confirmação</div>
+                <p>Verifique a pasta de spam ou lixo eletrônico. O remetente será <strong>Supabase Auth</strong> (noreply@mail.app.supabase.io). Se não encontrar, aguarde alguns minutos e tente novamente.</p>
+
+                <div class="sub-title">O link de redefinição de senha expirou</div>
+                <p>Links de redefinição expiram em 24 horas. Solicite um novo link clicando em <strong>Esqueci minha senha</strong> na tela de login.</p>
+
+                <div class="sub-title">Recebi a mensagem "Muitas tentativas"</div>
+                <p>O sistema limita o envio de emails para evitar abusos. Aguarde alguns minutos antes de solicitar um novo email.</p>
+
+                <div class="sub-title">Não consigo fazer uma saída de material</div>
+                <p>Verifique se a quantidade solicitada não é maior que o saldo atual do item. O sistema não permite saídas que resultem em saldo negativo.</p>
+
+                <div class="sub-title">As alterações de outro usuário não aparecem</div>
+                <p>O sistema atualiza automaticamente via conexão em tempo real. Se as alterações não aparecerem, verifique sua conexão com a internet e recarregue a página.</p>
+
+                <div class="sub-title">O sistema deslogou sozinho</div>
+                <p>A sessão expira após 30 minutos de inatividade. Faça login novamente para continuar.</p>
+
+                <div class="sub-title">Como alterar a quantidade de um item?</div>
+                <p>A quantidade só pode ser alterada por meio de uma <strong>movimentação</strong> (entrada ou saída). Acesse a aba Movimentação, selecione o item e registre a operação.</p>
+
+                <div class="sub-title">Posso usar meu email pessoal?</div>
+                <p>Não. O sistema aceita exclusivamente emails com domínio <code>@orkan.com.br</code>.</p>
+
+            </div>
+        </div>
+
+        <div style="margin-top: 30px; padding-top: 20px; border-top: 2px solid var(--borda-clara); text-align: center;">
+            <p style="color: var(--texto-claro); font-size: 9pt;">
+                Orkan Automação Industrial &mdash; Documento interno de engenharia
+            </p>
+        </div>
+
+        <div class="page-footer">Página 12</div>
+    </div>
+
+</body>
+</html>
