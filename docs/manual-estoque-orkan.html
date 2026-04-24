@@ -1042,7 +1042,13 @@
                 <p>O botão <strong>Limpar</strong> remove todos os filtros aplicados de uma vez.</p>
 
                 <div class="sub-title">4.3 Ordenação</div>
-                <p>Clique no cabeçalho de qualquer coluna para ordenar a tabela. Clique novamente para inverter a ordem (crescente/decrescente).</p>
+                <p>Clique no cabeçalho de qualquer coluna para ordenar a tabela. A ordenação funciona em três estados:</p>
+                <ol>
+                    <li>1º clique &mdash; ordena em ordem crescente (exibe seta <strong>&uarr;</strong> no cabeçalho)</li>
+                    <li>2º clique &mdash; inverte para ordem decrescente (seta <strong>&darr;</strong>)</li>
+                    <li>3º clique &mdash; remove a ordenação (seta desaparece, volta à ordem padrão)</li>
+                </ol>
+                <p>Ao clicar em outra coluna, a ordenação recomeça pela ordem crescente nessa nova coluna.</p>
 
                 <div class="sub-title">4.4 Visualizar / Editar Item</div>
                 <p>Clique em qualquer linha da tabela para abrir o <strong>modal do item</strong>. O comportamento depende do seu tipo de usuário:</p>
@@ -1237,6 +1243,22 @@
                     <li><strong>OS</strong> &mdash; filtrar por número de Ordem de Serviço</li>
                 </ul>
                 <p>O botão <strong>Limpar</strong> remove todos os filtros aplicados.</p>
+
+                <div class="sub-title">6.3 Ordenação</div>
+                <p>Clique no cabeçalho de qualquer coluna para ordenar o histórico. Funciona em três estados (crescente &uarr;, decrescente &darr;, sem ordenação), da mesma forma que na aba Inventário.</p>
+
+                <div class="sub-title">6.4 Detalhes da Movimentação</div>
+                <p>Clique em qualquer linha do histórico para abrir um <strong>popup com detalhes completos</strong>, dividido em duas seções:</p>
+                <ul>
+                    <li><strong>Movimentação</strong> &mdash; data, tipo, quantidade, responsável, destino, OS, saldos e observações</li>
+                    <li><strong>Produto</strong> &mdash; dados do item movimentado (código, descrição, fabricante, caixa, saldo atual)</li>
+                </ul>
+                <p>O popup é apenas de consulta e funciona tanto no computador quanto no celular. Para fechar, utilize o botão <strong>&times;</strong>.</p>
+
+                <div class="img-container">
+                    <img src="img/06b-historico-popup.png" alt="Popup de detalhes da movimentação">
+                    <div class="img-caption">Figura 6.1 &mdash; Popup de detalhes exibindo as seções Movimentação e Produto</div>
+                </div>
             </div>
         </div>
 
@@ -1287,8 +1309,24 @@
                     </tbody>
                 </table>
 
-                <div class="sub-title">7.2 Alertas</div>
-                <p>Itens com estoque baixo ou zerado são destacados no dashboard com alertas visuais, permitindo ação rápida. Ao clicar em um item com alerta, o sistema direciona para a aba de movimentação para facilitar a reposição.</p>
+                <div class="sub-title">7.2 Alertas de Estoque Crítico</div>
+                <p>Itens com estoque baixo ou zerado são listados na tabela <strong>Alertas de Estoque Crítico</strong> do dashboard. Clique em qualquer linha para abrir o modal do item:</p>
+                <ul>
+                    <li><strong>Administrador</strong> &mdash; abre em modo edição, permitindo ajustar descrição, localização e demais campos</li>
+                    <li><strong>Usuário Comum</strong> &mdash; abre em modo somente leitura (consulta)</li>
+                </ul>
+                <p>Para repor o saldo, utilize sempre a aba <strong>Movimentação</strong> (entrada).</p>
+
+                <div class="sub-title">7.3 Últimas Movimentações</div>
+                <p>A tabela <strong>Últimas Movimentações</strong> exibe as 10 movimentações mais recentes em ordem cronológica (mais recente no topo). Clique em qualquer linha para abrir o mesmo popup de detalhes descrito na seção 6.4, com as seções <strong>Movimentação</strong> e <strong>Produto</strong>.</p>
+
+                <div class="img-container">
+                    <img src="img/07b-dashboard-tabelas.png" alt="Tabelas de Alertas e Últimas Movimentações">
+                    <div class="img-caption">Figura 7.1 &mdash; Tabelas de Alertas de Estoque Crítico e Últimas Movimentações</div>
+                </div>
+
+                <div class="sub-title">7.4 Ordenação das Tabelas</div>
+                <p>As tabelas de <strong>Alertas</strong> e <strong>Últimas Movimentações</strong> também suportam ordenação de três estados por clique no cabeçalho, da mesma forma que as abas Inventário e Histórico.</p>
 
                 <div class="alert-success alert-box">
                     <i class="bi bi-check-circle-fill"></i>
@@ -1351,6 +1389,11 @@
                     <li>Confirme a ação no diálogo que aparece</li>
                 </ol>
                 <p>Para rebaixar um administrador, o processo é o mesmo &mdash; o botão muda para <strong>Rebaixar</strong>.</p>
+
+                <div class="img-container">
+                    <img src="img/08b-configuracoes-usuarios.png" alt="Seção Usuários e Permissões">
+                    <div class="img-caption">Figura 8.1 &mdash; Gerenciamento de usuários com badges de papel e botões Promover/Rebaixar</div>
+                </div>
 
                 <div class="alert-info alert-box">
                     <i class="bi bi-info-circle-fill"></i>
