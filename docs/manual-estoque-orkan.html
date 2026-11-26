@@ -1163,6 +1163,40 @@
                         O botão <strong>Novo Item</strong> só aparece para usuários com papel de <strong>Administrador</strong>. Usuários comuns não visualizam essa opção.
                     </div>
                 </div>
+                <div class="sub-title">5.5 Leitura de Código de Barras pela Câmera</div>
+                <p>O botão <strong>Ler código de barras</strong>, no topo dos formulários de Entrada, Saída e Novo Item, usa a câmera do celular para ler o código de barras da etiqueta do fabricante. A leitura substitui a digitação do código; a quantidade e os demais campos continuam preenchidos por você.</p>
+
+                <div class="img-container">
+                    <img src="img/05b-leitor-codigo-barras.png" alt="Botão Ler código de barras no formulário de Entrada de Material">
+                    <div class="img-caption">Figura 5b &mdash; Botão Ler código de barras no topo do formulário</div>
+                </div>
+
+                <ol>
+                    <li>Toque em <strong>Ler código de barras</strong> e permita o uso da câmera quando o navegador pedir.</li>
+                    <li>Segure o celular a cerca de 15 cm da etiqueta.</li>
+                    <li>Alinhe a linha vermelha com o código de barras do código do produto. Em etiquetas com mais de um código de barras, deixe apenas um deles dentro da faixa clara.</li>
+                    <li>Aguarde a leitura. A janela fecha sozinha quando o código é reconhecido.</li>
+                </ol>
+                <p>O resultado depende do formulário aberto:</p>
+                <ul>
+                    <li><strong>Entrada ou Saída, item cadastrado</strong> &mdash; o item é selecionado e o cursor vai para o campo Quantidade.</li>
+                    <li><strong>Entrada ou Saída, código sem cadastro</strong> &mdash; o código lido aparece no campo de busca e o sistema avisa que não há item com aquele código.</li>
+                    <li><strong>Novo Item</strong> &mdash; o campo Código é preenchido com o código lido. Se o código já estiver cadastrado, o sistema avisa e orienta a usar a Entrada.</li>
+                </ul>
+
+                <div class="alert-info alert-box">
+                    <i class="bi bi-info-circle-fill"></i>
+                    <div>
+                        O leitor apenas identifica o item. Nenhuma movimentação é registrada e nenhum item é salvo até você tocar no botão de confirmação do formulário.
+                    </div>
+                </div>
+
+                <div class="alert-warning alert-box">
+                    <i class="bi bi-exclamation-triangle-fill"></i>
+                    <div>
+                        A caixa do fabricante pode trazer outros códigos de barras, como o número de série e o código EAN. Eles não identificam o item no sistema: leia o código de barras que corresponde ao código do produto impresso na etiqueta.
+                    </div>
+                </div>
             </div>
         </div>
 
