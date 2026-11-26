@@ -141,6 +141,16 @@ body.no-admin #modalEditar .modal-body textarea[readonly]{background:var(--zebra
 .modal-close{background:none;border:none;color:#fff;font-size:22px;cursor:pointer}
 .modal-body{padding:20px}
 .modal-footer{padding:14px 20px;border-top:1px solid var(--borda);display:flex;gap:8px;justify-content:flex-end}
+/* LEITOR DE CODIGO DE BARRAS */
+.scan-top{margin-bottom:14px}
+.btn-scan{display:inline-flex;align-items:center;justify-content:center;gap:8px;white-space:nowrap;padding:10px 16px;font-size:13px}
+@media(max-width:600px){.scan-top .btn-scan{width:100%}}
+.btn-scan svg{width:16px;height:16px;flex:none}
+#scanReader{position:relative;width:100%;background:#000;border-radius:6px;overflow:hidden;min-height:180px}
+#scanReader.scanning::after{content:'';position:absolute;left:6%;right:6%;top:50%;height:2px;margin-top:-1px;background:#e53935;box-shadow:0 0 6px 1px rgba(229,57,53,.85);pointer-events:none;z-index:5}
+#scanReader video{display:block;width:100%!important}
+.scan-status{font-size:13px;color:var(--texto2);margin-top:12px;text-align:center}
+.scan-status.error{color:var(--vermelho);font-weight:600}
 /* TOAST */
 #toast-container{position:fixed;top:60px;right:16px;z-index:300;display:flex;flex-direction:column;gap:8px}
 .toast{padding:10px 16px;border-radius:6px;color:#fff;font-size:12px;font-weight:600;animation:slideIn .3s ease;min-width:250px;box-shadow:0 4px 12px rgba(0,0,0,.2)}
@@ -288,6 +298,18 @@ tbody td{padding:4px}
 <body>
 
 <!-- TELA DE LOGIN -->
+<!-- LEITOR DE CODIGO DE BARRAS: no nivel do body, como overlay -->
+<div class="modal-overlay" id="modalScanner" onclick="if(event.target===this)closeScanner()">
+<div class="modal">
+<div class="modal-header"><h3>Ler código de barras</h3><button class="modal-close" onclick="closeScanner()">×</button></div>
+<div class="modal-body">
+<div id="scanReader"></div>
+<p class="scan-status" id="scanStatus">Abrindo a câmera...</p>
+</div>
+<div class="modal-footer"><button class="btn btn-outline" onclick="closeScanner()">Cancelar</button></div>
+</div>
+</div>
+
 <div id="loginScreen" style="display:none">
 <div class="login-box">
 <div class="login-header">
@@ -414,6 +436,7 @@ tbody td{padding:4px}
 <!-- ENTRADA / SAÍDA -->
 <div id="movForm" class="form-section" style="display: block;">
 <h3 id="movTitle">Entrada de Material</h3>
+<div class="scan-top"><button type="button" class="btn btn-azul btn-scan" onclick="openScanner('mov')" title="Ler o código de barras com a câmera"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M2 5h2v14H2zM6 5h1v14H6zM9 5h2v14H9zM13 5h1v14h-1zM16 5h2v14h-2zM20 5h2v14h-2z"/></svg>Ler código de barras</button></div>
 <div class="form-row">
 <div class="form-group">
 <label>Buscar item (código, descrição ou fabricante) *</label>
@@ -442,6 +465,7 @@ tbody td{padding:4px}
 <!-- NOVO ITEM -->
 <div id="novoForm" class="form-section" style="display: none;">
 <h3>Adicionar Novo Item ao Estoque</h3>
+<div class="scan-top"><button type="button" class="btn btn-azul btn-scan" onclick="openScanner('novo')" title="Ler o código de barras com a câmera"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M2 5h2v14H2zM6 5h1v14H6zM9 5h2v14H9zM13 5h1v14h-1zM16 5h2v14h-2zM20 5h2v14h-2z"/></svg>Ler código de barras</button></div>
 <div class="form-row">
 <div class="form-group"><label>Código *</label><input type="text" id="nvCodigo"></div>
 <div class="form-group"><label>Descrição *</label><input type="text" id="nvDesc" oninput="this.value=this.value.toUpperCase()"></div>
@@ -1291,6 +1315,11 @@ function searchItem() {
   const div = document.getElementById('movResults');
   if (q.length < 2) { div.style.display = 'none'; return; }
   const res = ESTOQUE.filter(x => norm(x.codigo+x.descricao+x.fabricante+x.produto+(x.subtipo||'')+(x.observacao||'')+x.localizacao).includes(q)).slice(0,8);
+  showSearchResults(res);
+}
+
+function showSearchResults(res) {
+  const div = document.getElementById('movResults');
   if (!res.length) { div.style.display = 'none'; return; }
   div.style.display = 'block';
   div.innerHTML = res.map(x =>
@@ -1470,6 +1499,156 @@ async function addItem() {
     console.error('Erro ao adicionar item:', e);
     toast('Erro ao adicionar: ' + (e.message || 'falha desconhecida'), 'error');
   } finally { btnAdd.disabled = false; }
+}
+
+// ===== LEITOR DE CODIGO DE BARRAS (camera) =====
+// Biblioteca carregada so no primeiro uso, com versao fixa e hash de integridade.
+const SCAN_LIB_SRC = 'https://cdn.jsdelivr.net/npm/html5-qrcode@2.3.8/html5-qrcode.min.js';
+const SCAN_LIB_INTEGRITY = 'sha384-c9d8RFSL+u3exBOJ4Yp3HUJXS4znl9f+z66d1y54ig+ea249SpqR+w1wyvXz/lk+';
+let scanLibPromise = null;
+let scanner = null;     // instancia Html5Qrcode da leitura em curso
+let scanTarget = null;  // 'mov' | 'novo' | null (leitor fechado)
+
+function loadScanLib() {
+  if (window.Html5Qrcode) return Promise.resolve();
+  if (!scanLibPromise) {
+    scanLibPromise = new Promise((resolve, reject) => {
+      const s = document.createElement('script');
+      s.src = SCAN_LIB_SRC;
+      s.integrity = SCAN_LIB_INTEGRITY;
+      s.crossOrigin = 'anonymous';
+      s.onload = resolve;
+      s.onerror = () => { scanLibPromise = null; s.remove(); reject(new Error('Falha ao carregar o leitor')); };
+      document.head.appendChild(s);
+    });
+  }
+  return scanLibPromise;
+}
+
+function setScanStatus(msg, isError) {
+  const el = document.getElementById('scanStatus');
+  el.textContent = msg;
+  el.classList.toggle('error', !!isError);
+}
+
+async function releaseScanner(s) {
+  try {
+    if (s.isScanning) await s.stop();
+    s.clear();
+  } catch(e) { console.warn('Erro ao encerrar o leitor:', e); }
+}
+
+async function openScanner(target) {
+  if (scanTarget) return;
+  scanTarget = target;
+  document.getElementById('modalScanner').classList.add('show');
+  setScanStatus('Abrindo a câmera...');
+
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+    setScanStatus('Este navegador não libera a câmera nesta página. Abra o app pelo endereço https.', true);
+    return;
+  }
+  try {
+    await loadScanLib();
+  } catch(e) {
+    setScanStatus('Não foi possível carregar o leitor. Confira a internet e tente de novo.', true);
+    return;
+  }
+  if (scanTarget !== target) return; // fechado enquanto a biblioteca carregava
+
+  const s = new Html5Qrcode('scanReader', { experimentalFeatures: { useBarCodeDetectorIfSupported: true }, verbose: false });
+  scanner = s;
+  try {
+    await s.start(
+      { facingMode: 'environment' },
+      // Area de leitura larga e baixa: formato do codigo de barras de embalagem
+      { fps: 10, qrbox: (w, h) => ({ width: Math.max(50, Math.floor(w * 0.9)), height: Math.max(50, Math.floor(Math.min(w, h) * 0.55)) }) },
+      onScanSuccess,
+      () => {} // quadro sem codigo: segue lendo
+    );
+  } catch(e) {
+    console.error('Erro ao abrir a câmera:', e);
+    if (scanner === s) {
+      scanner = null;
+      const denied = e && (e.name === 'NotAllowedError' || /permission|denied/i.test(String(e.message || e)));
+      setScanStatus(denied
+        ? 'Permissão da câmera negada. Libere a câmera para este site nas configurações do navegador.'
+        : 'Não foi possível abrir a câmera deste aparelho.', true);
+    }
+    return;
+  }
+  if (scanner !== s) { await releaseScanner(s); return; } // fechado enquanto a camera abria
+  document.getElementById('scanReader').classList.add('scanning'); // liga a linha de referencia
+  setScanStatus('Alinhe o código de barras com a linha vermelha.');
+}
+
+async function closeScanner() {
+  const s = scanner;
+  scanner = null;
+  scanTarget = null;
+  document.getElementById('modalScanner').classList.remove('show');
+  document.getElementById('scanReader').classList.remove('scanning');
+  // Se a camera ainda esta abrindo, o openScanner libera quando o start terminar
+  if (s && s.isScanning) await releaseScanner(s);
+}
+
+function onScanSuccess(text) {
+  const target = scanTarget;
+  if (!target) return; // leitura repetida depois de fechar
+  closeScanner();
+  const code = (text || '').trim();
+  if (!code) return;
+  if (target === 'novo') applyScanToNewItem(code);
+  else applyScanToMovement(code);
+}
+
+// Acha os itens pelo codigo lido. Primeiro o codigo identico; se nao houver,
+// os itens cujo codigo esta contido na leitura (etiqueta do fabricante que traz
+// o codigo junto com lote ou numero de serie).
+function matchScannedCode(items, text) {
+  const q = norm(text).trim();
+  if (!q) return [];
+  const exact = items.filter(x => norm(x.codigo).trim() === q);
+  if (exact.length) return exact;
+  return items.filter(x => {
+    const c = norm(x.codigo).trim();
+    return c.length >= 5 && q.includes(c);
+  });
+}
+
+function applyScanToMovement(code) {
+  const found = matchScannedCode(ESTOQUE, code);
+  if (found.length === 1) {
+    selectItem(found[0].id);
+    toast('Item encontrado — ' + found[0].descricao, 'success');
+    const qtd = document.getElementById('movQtd');
+    qtd.focus();
+    qtd.select();
+    return;
+  }
+  movItemId = null;
+  document.getElementById('movSelected').style.display = 'none';
+  document.getElementById('movBusca').value = code;
+  if (found.length > 1) {
+    showSearchResults(found.slice(0, 8));
+    toast('Mais de um item combina com o código lido. Escolha na lista.', 'info');
+    return;
+  }
+  searchItem();
+  if (document.getElementById('movResults').style.display === 'none') {
+    toast('Nenhum item cadastrado com o código ' + code + (IS_ADMIN ? '. Cadastre em Novo Item.' : ''), 'error');
+  }
+}
+
+function applyScanToNewItem(code) {
+  const existing = matchScannedCode(ESTOQUE, code).find(x => norm(x.codigo).trim() === norm(code).trim());
+  if (existing) {
+    toast('Código já cadastrado — ' + existing.descricao + '. Use Entrada para somar ao saldo.', 'error');
+    return;
+  }
+  document.getElementById('nvCodigo').value = code;
+  toast('Código lido: ' + code, 'success');
+  document.getElementById('nvDesc').focus();
 }
 
 // ===== EDITAR/VISUALIZAR ITEM =====
