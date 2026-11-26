@@ -146,9 +146,11 @@ body.no-admin #modalEditar .modal-body textarea[readonly]{background:var(--zebra
 .btn-scan{display:inline-flex;align-items:center;justify-content:center;gap:8px;white-space:nowrap;padding:10px 16px;font-size:13px}
 @media(max-width:600px){.scan-top .btn-scan{width:100%}}
 .btn-scan svg{width:16px;height:16px;flex:none}
-#scanReader{position:relative;width:100%;background:#000;border-radius:6px;overflow:hidden;min-height:180px}
-#scanReader.scanning::after{content:'';position:absolute;left:6%;right:6%;top:50%;height:2px;margin-top:-1px;background:#e53935;box-shadow:0 0 6px 1px rgba(229,57,53,.85);pointer-events:none;z-index:5}
-#scanReader video{display:block;width:100%!important}
+#scanReader{position:relative;width:100%;height:46vh;min-height:200px;max-height:420px;background:#000;border-radius:6px;overflow:hidden}
+#scanVideo{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover}
+.scan-band{display:none;position:absolute;left:5%;right:5%;top:50%;aspect-ratio:5/1;transform:translateY(-50%);border:2px solid #fff;border-radius:4px;box-shadow:0 0 0 2000px rgba(0,0,0,.45);pointer-events:none}
+.scan-band::after{content:'';position:absolute;left:0;right:0;top:50%;height:2px;margin-top:-1px;background:#e53935;box-shadow:0 0 6px 1px rgba(229,57,53,.85)}
+#scanReader.scanning .scan-band{display:block}
 .scan-status{font-size:13px;color:var(--texto2);margin-top:12px;text-align:center}
 .scan-status.error{color:var(--vermelho);font-weight:600}
 /* TOAST */
@@ -303,7 +305,7 @@ tbody td{padding:4px}
 <div class="modal">
 <div class="modal-header"><h3>Ler código de barras</h3><button class="modal-close" onclick="closeScanner()">×</button></div>
 <div class="modal-body">
-<div id="scanReader"></div>
+<div id="scanReader"><video id="scanVideo" playsinline muted autoplay></video><div class="scan-band"></div></div>
 <p class="scan-status" id="scanStatus">Abrindo a câmera...</p>
 </div>
 <div class="modal-footer"><button class="btn btn-outline" onclick="closeScanner()">Cancelar</button></div>
@@ -1502,15 +1504,23 @@ async function addItem() {
 }
 
 // ===== LEITOR DE CODIGO DE BARRAS (camera) =====
-// Biblioteca carregada so no primeiro uso, com versao fixa e hash de integridade.
-const SCAN_LIB_SRC = 'https://cdn.jsdelivr.net/npm/html5-qrcode@2.3.8/html5-qrcode.min.js';
-const SCAN_LIB_INTEGRITY = 'sha384-c9d8RFSL+u3exBOJ4Yp3HUJXS4znl9f+z66d1y54ig+ea249SpqR+w1wyvXz/lk+';
+// A camera e aberta direto pelo navegador e a faixa sob a linha vermelha e decodificada
+// na resolucao original do video. Decodificar na resolucao da tela nao distingue as barras
+// de um Code 128 longo (a etiqueta Siemens tem cerca de 270 barras na linha 1P).
+// Decodificador: o nativo do navegador (BarcodeDetector, Chrome no Android) e, onde ele nao
+// existe, a ZXing, carregada so nesse caso, com versao fixa e hash de integridade.
+const SCAN_LIB_SRC = 'https://cdn.jsdelivr.net/npm/@zxing/library@0.21.3/umd/index.min.js';
+const SCAN_LIB_INTEGRITY = 'sha384-BzBxP10ZE72aitqj5UMmUsbKFliP/DZqA8Wq+BNNhlIJDGoEd1tpkMYXOg9+n6sB';
+// Tipos lineares usados em etiqueta de componente. Os demais geram leitura falsa.
+const SCAN_FORMATS = ['ean_13', 'ean_8', 'upc_a', 'upc_e', 'code_128', 'code_39'];
+const SCAN_READS_TO_CONFIRM = 2;
+const SCAN_INTERVAL_MS = 120;
 let scanLibPromise = null;
-let scanner = null;     // instancia Html5Qrcode da leitura em curso
-let scanTarget = null;  // 'mov' | 'novo' | null (leitor fechado)
+let scanDecoderPromise = null;
+let scanSession = null; // { target, stream, confirm } enquanto a janela esta aberta
 
 function loadScanLib() {
-  if (window.Html5Qrcode) return Promise.resolve();
+  if (window.ZXing) return Promise.resolve();
   if (!scanLibPromise) {
     scanLibPromise = new Promise((resolve, reject) => {
       const s = document.createElement('script');
@@ -1525,22 +1535,118 @@ function loadScanLib() {
   return scanLibPromise;
 }
 
+function createZxingReader(ZXing) {
+  const F = ZXing.BarcodeFormat;
+  const hints = new Map();
+  hints.set(ZXing.DecodeHintType.POSSIBLE_FORMATS, [F.EAN_13, F.EAN_8, F.UPC_A, F.UPC_E, F.CODE_128, F.CODE_39]);
+  hints.set(ZXing.DecodeHintType.TRY_HARDER, true);
+  const reader = new ZXing.MultiFormatReader();
+  reader.setHints(hints);
+  return reader;
+}
+
+// Entre varios codigos detectados na faixa, fica o mais proximo da linha vermelha.
+function pickCenterBarcode(detections, height) {
+  let best = null;
+  let bestDist = Infinity;
+  for (const d of detections) {
+    const box = d.boundingBox || { y: 0, height: height };
+    const dist = Math.abs(box.y + box.height / 2 - height / 2);
+    if (dist < bestDist) { best = d; bestDist = dist; }
+  }
+  return best;
+}
+
+async function createNativeDecoder() {
+  if (!('BarcodeDetector' in window)) return null;
+  try {
+    const supported = await BarcodeDetector.getSupportedFormats();
+    const formats = SCAN_FORMATS.filter(f => supported.includes(f));
+    if (!formats.includes('code_128') || !formats.includes('ean_13')) return null;
+    const detector = new BarcodeDetector({ formats });
+    return {
+      name: 'native',
+      decode: async canvas => {
+        const hit = pickCenterBarcode(await detector.detect(canvas), canvas.height);
+        return hit ? { text: hit.rawValue, format: hit.format } : null;
+      }
+    };
+  } catch(e) {
+    console.warn('Leitor nativo indisponível:', e);
+    return null;
+  }
+}
+
+async function createZxingDecoder() {
+  await loadScanLib();
+  const reader = createZxingReader(window.ZXing);
+  return {
+    name: 'zxing',
+    decode: async canvas => {
+      try {
+        const source = new ZXing.HTMLCanvasElementLuminanceSource(canvas);
+        const result = reader.decodeWithState(new ZXing.BinaryBitmap(new ZXing.HybridBinarizer(source)));
+        return { text: result.getText(), format: String(ZXing.BarcodeFormat[result.getBarcodeFormat()]).toLowerCase() };
+      } catch(e) {
+        return null; // quadro sem codigo legivel
+      }
+    }
+  };
+}
+
+function getScanDecoder() {
+  if (!scanDecoderPromise) {
+    scanDecoderPromise = (async () => (await createNativeDecoder()) || (await createZxingDecoder()))();
+    scanDecoderPromise.catch(() => { scanDecoderPromise = null; });
+  }
+  return scanDecoderPromise;
+}
+
+// Regiao do quadro da camera que corresponde a faixa de leitura na tela. O video ocupa a
+// caixa com object-fit: cover, entao o centro da caixa e o centro do quadro.
+function computeScanRegion(videoW, videoH, boxW, boxH, band) {
+  const scale = Math.max(boxW / videoW, boxH / videoH);
+  let sw = Math.round(band.width / scale);
+  let sh = Math.round(band.height / scale);
+  let sx = Math.round(videoW / 2 + (band.x + band.width / 2 - boxW / 2) / scale - sw / 2);
+  let sy = Math.round(videoH / 2 + (band.y + band.height / 2 - boxH / 2) / scale - sh / 2);
+  sw = Math.max(1, Math.min(sw, videoW));
+  sh = Math.max(1, Math.min(sh, videoH));
+  sx = Math.max(0, Math.min(sx, videoW - sw));
+  sy = Math.max(0, Math.min(sy, videoH - sh));
+  return { sx: sx, sy: sy, sw: sw, sh: sh };
+}
+
+// A leitura so vale quando o mesmo valor, do mesmo tipo, vem N vezes seguidas.
+// Leitura falsa ou cortada nao se repete igual.
+function createReadConfirmer(needed) {
+  let last = null;
+  let count = 0;
+  return function(text, format) {
+    const key = format + '|' + text;
+    if (key === last) count++;
+    else { last = key; count = 1; }
+    return count >= needed;
+  };
+}
+
 function setScanStatus(msg, isError) {
   const el = document.getElementById('scanStatus');
   el.textContent = msg;
   el.classList.toggle('error', !!isError);
 }
 
-async function releaseScanner(s) {
-  try {
-    if (s.isScanning) await s.stop();
-    s.clear();
-  } catch(e) { console.warn('Erro ao encerrar o leitor:', e); }
+function stopScanStream(session) {
+  if (session.stream) session.stream.getTracks().forEach(t => t.stop());
+  session.stream = null;
+  const video = document.getElementById('scanVideo');
+  video.pause();
+  video.srcObject = null;
 }
 
 async function openScanner(target) {
-  if (scanTarget) return;
-  scanTarget = target;
+  if (scanSession) return;
+  const session = scanSession = { target: target, stream: null, confirm: createReadConfirmer(SCAN_READS_TO_CONFIRM) };
   document.getElementById('modalScanner').classList.add('show');
   setScanStatus('Abrindo a câmera...');
 
@@ -1548,72 +1654,147 @@ async function openScanner(target) {
     setScanStatus('Este navegador não libera a câmera nesta página. Abra o app pelo endereço https.', true);
     return;
   }
+
+  let decoder;
   try {
-    await loadScanLib();
+    decoder = await getScanDecoder();
   } catch(e) {
-    setScanStatus('Não foi possível carregar o leitor. Confira a internet e tente de novo.', true);
+    console.error('Erro ao carregar o leitor:', e);
+    if (scanSession === session) setScanStatus('Não foi possível carregar o leitor. Confira a internet e tente de novo.', true);
     return;
   }
-  if (scanTarget !== target) return; // fechado enquanto a biblioteca carregava
+  if (scanSession !== session) return; // fechado enquanto o leitor carregava
 
-  const s = new Html5Qrcode('scanReader', { experimentalFeatures: { useBarCodeDetectorIfSupported: true }, verbose: false });
-  scanner = s;
+  let stream;
   try {
-    await s.start(
-      { facingMode: 'environment' },
-      // Area de leitura larga e baixa: formato do codigo de barras de embalagem
-      { fps: 10, qrbox: (w, h) => ({ width: Math.max(50, Math.floor(w * 0.9)), height: Math.max(50, Math.floor(Math.min(w, h) * 0.55)) }) },
-      onScanSuccess,
-      () => {} // quadro sem codigo: segue lendo
-    );
+    stream = await navigator.mediaDevices.getUserMedia({
+      audio: false,
+      video: { facingMode: { ideal: 'environment' }, width: { ideal: 1920 }, height: { ideal: 1080 } }
+    });
   } catch(e) {
     console.error('Erro ao abrir a câmera:', e);
-    if (scanner === s) {
-      scanner = null;
-      const denied = e && (e.name === 'NotAllowedError' || /permission|denied/i.test(String(e.message || e)));
+    if (scanSession === session) {
+      const denied = e && (e.name === 'NotAllowedError' || e.name === 'SecurityError');
       setScanStatus(denied
         ? 'Permissão da câmera negada. Libere a câmera para este site nas configurações do navegador.'
         : 'Não foi possível abrir a câmera deste aparelho.', true);
     }
     return;
   }
-  if (scanner !== s) { await releaseScanner(s); return; } // fechado enquanto a camera abria
-  document.getElementById('scanReader').classList.add('scanning'); // liga a linha de referencia
-  setScanStatus('Alinhe o código de barras com a linha vermelha.');
+  if (scanSession !== session) { stream.getTracks().forEach(t => t.stop()); return; } // fechado enquanto a camera abria
+  session.stream = stream;
+
+  // Foco continuo, quando a camera oferece. Sem ele a etiqueta de perto fica borrada.
+  try {
+    const track = stream.getVideoTracks()[0];
+    const caps = track.getCapabilities ? track.getCapabilities() : {};
+    if (caps.focusMode && caps.focusMode.includes('continuous')) {
+      await track.applyConstraints({ advanced: [{ focusMode: 'continuous' }] });
+    }
+  } catch(e) { console.warn('Foco contínuo indisponível:', e); }
+
+  const video = document.getElementById('scanVideo');
+  video.srcObject = stream;
+  try { await video.play(); } catch(e) { console.warn('Vídeo não iniciou sozinho:', e); }
+  if (scanSession !== session) return;
+
+  document.getElementById('scanReader').classList.add('scanning'); // mostra a faixa e a linha
+  setScanStatus('Alinhe o código de barras com a linha vermelha, a uns 15 cm da etiqueta.');
+  runScanLoop(session, decoder);
 }
 
-async function closeScanner() {
-  const s = scanner;
-  scanner = null;
-  scanTarget = null;
+async function runScanLoop(session, decoder) {
+  const video = document.getElementById('scanVideo');
+  const box = document.getElementById('scanReader');
+  const band = box.querySelector('.scan-band');
+  const canvas = document.createElement('canvas');
+  const ctx = canvas.getContext('2d', { willReadFrequently: true });
+
+  while (scanSession === session) {
+    await new Promise(r => setTimeout(r, SCAN_INTERVAL_MS));
+    if (scanSession !== session) return;
+    if (video.readyState < 2 || !video.videoWidth) continue;
+
+    const boxRect = box.getBoundingClientRect();
+    const bandRect = band.getBoundingClientRect();
+    const region = computeScanRegion(video.videoWidth, video.videoHeight, boxRect.width, boxRect.height, {
+      x: bandRect.left - boxRect.left, y: bandRect.top - boxRect.top, width: bandRect.width, height: bandRect.height
+    });
+    canvas.width = region.sw;
+    canvas.height = region.sh;
+    ctx.drawImage(video, region.sx, region.sy, region.sw, region.sh, 0, 0, region.sw, region.sh);
+
+    let hit = null;
+    try {
+      hit = await decoder.decode(canvas);
+    } catch(e) {
+      // O leitor nativo falhou em uso: passa para a ZXing e segue.
+      console.warn('Erro no leitor ' + decoder.name + ':', e);
+      if (decoder.name !== 'native') continue;
+      try {
+        decoder = await createZxingDecoder();
+        scanDecoderPromise = Promise.resolve(decoder);
+      } catch(e2) {
+        if (scanSession === session) setScanStatus('Não foi possível carregar o leitor. Confira a internet e tente de novo.', true);
+        return;
+      }
+      continue;
+    }
+    if (scanSession !== session) return;
+    if (!hit || !hit.text) continue;
+    if (!session.confirm(hit.text, hit.format)) continue;
+
+    const code = hit.text.trim();
+    if (!code) continue;
+    closeScanner();
+    deliverScan(session.target, code);
+    return;
+  }
+}
+
+function closeScanner() {
+  const session = scanSession;
+  scanSession = null;
   document.getElementById('modalScanner').classList.remove('show');
   document.getElementById('scanReader').classList.remove('scanning');
-  // Se a camera ainda esta abrindo, o openScanner libera quando o start terminar
-  if (s && s.isScanning) await releaseScanner(s);
+  // Se a camera ainda esta abrindo, o openScanner a desliga quando terminar
+  if (session) stopScanStream(session);
 }
 
-function onScanSuccess(text) {
-  const target = scanTarget;
-  if (!target) return; // leitura repetida depois de fechar
-  closeScanner();
-  const code = (text || '').trim();
-  if (!code) return;
+function deliverScan(target, code) {
   if (target === 'novo') applyScanToNewItem(code);
   else applyScanToMovement(code);
 }
 
-// Acha os itens pelo codigo lido. Primeiro o codigo identico; se nao houver,
-// os itens cujo codigo esta contido na leitura (etiqueta do fabricante que traz
-// o codigo junto com lote ou numero de serie).
+// Chave de comparacao: sem maiusculas, acentos nem espacos.
+function scanKey(s) { return norm(s).replace(/\s+/g, ''); }
+
+// Prefixo "1P" (numero da peca) das etiquetas de fabricante. Devolve null se nao houver.
+function stripPartPrefix(key) { return /^1p.+/.test(key) ? key.slice(2) : null; }
+
+// Acha os itens pelo codigo lido, nesta ordem: codigo identico; codigo identico depois de
+// tirar o prefixo 1P; codigos (5+ caracteres) contidos na leitura, para etiqueta que traz
+// o codigo junto com lote ou serie.
 function matchScannedCode(items, text) {
-  const q = norm(text).trim();
+  const q = scanKey(text);
   if (!q) return [];
-  const exact = items.filter(x => norm(x.codigo).trim() === q);
+  const exact = items.filter(x => scanKey(x.codigo) === q);
   if (exact.length) return exact;
+  const part = stripPartPrefix(q);
+  if (part) {
+    const byPart = items.filter(x => scanKey(x.codigo) === part);
+    if (byPart.length) return byPart;
+  }
   return items.filter(x => {
-    const c = norm(x.codigo).trim();
+    const c = scanKey(x.codigo);
     return c.length >= 5 && q.includes(c);
   });
+}
+
+// Codigo que vai para o campo do item novo: sem o prefixo 1P.
+function codeForNewItem(text) {
+  const clean = (text || '').trim();
+  return /^1p.+/i.test(clean) ? clean.slice(2).trim() : clean;
 }
 
 function applyScanToMovement(code) {
@@ -1636,18 +1817,21 @@ function applyScanToMovement(code) {
   }
   searchItem();
   if (document.getElementById('movResults').style.display === 'none') {
-    toast('Nenhum item cadastrado com o código ' + code + (IS_ADMIN ? '. Cadastre em Novo Item.' : ''), 'error');
+    toast('Nenhum item cadastrado com o código ' + code + '. Leia o código da linha 1P da etiqueta' +
+          (IS_ADMIN ? ' ou cadastre em Novo Item.' : '.'), 'error');
   }
 }
 
 function applyScanToNewItem(code) {
-  const existing = matchScannedCode(ESTOQUE, code).find(x => norm(x.codigo).trim() === norm(code).trim());
+  const value = codeForNewItem(code);
+  const keys = [scanKey(code), scanKey(value)];
+  const existing = ESTOQUE.find(x => keys.includes(scanKey(x.codigo)));
   if (existing) {
     toast('Código já cadastrado — ' + existing.descricao + '. Use Entrada para somar ao saldo.', 'error');
     return;
   }
-  document.getElementById('nvCodigo').value = code;
-  toast('Código lido: ' + code, 'success');
+  document.getElementById('nvCodigo').value = value;
+  toast('Código lido: ' + value, 'success');
   document.getElementById('nvDesc').focus();
 }
 
