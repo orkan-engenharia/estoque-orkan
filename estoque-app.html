@@ -1797,6 +1797,17 @@ function codeForNewItem(text) {
   return /^1p.+/i.test(clean) ? clean.slice(2).trim() : clean;
 }
 
+// Aviso para codigo lido sem item cadastrado. O codigo aparece sem o prefixo 1P. A dica de
+// ler o codigo do produto so vale quando a leitura nao trouxe esse prefixo: a etiqueta pode
+// ter outros codigos de barras (EAN, serie). O texto nao cita 1P porque nem todo fabricante usa.
+function unknownCodeMessage(code, isAdmin) {
+  const shown = codeForNewItem(code);
+  const base = 'Nenhum item cadastrado com o código ' + shown + '.';
+  if (shown !== (code || '').trim()) return base + (isAdmin ? ' Cadastre em Novo Item.' : '');
+  return base + ' Se a etiqueta tiver mais de um código de barras, leia o do código do produto' +
+         (isAdmin ? ' ou cadastre em Novo Item.' : '.');
+}
+
 function applyScanToMovement(code) {
   const found = matchScannedCode(ESTOQUE, code);
   if (found.length === 1) {
@@ -1809,7 +1820,7 @@ function applyScanToMovement(code) {
   }
   movItemId = null;
   document.getElementById('movSelected').style.display = 'none';
-  document.getElementById('movBusca').value = code;
+  document.getElementById('movBusca').value = found.length > 1 ? code : codeForNewItem(code);
   if (found.length > 1) {
     showSearchResults(found.slice(0, 8));
     toast('Mais de um item combina com o código lido. Escolha na lista.', 'info');
@@ -1817,8 +1828,7 @@ function applyScanToMovement(code) {
   }
   searchItem();
   if (document.getElementById('movResults').style.display === 'none') {
-    toast('Nenhum item cadastrado com o código ' + code + '. Leia o código da linha 1P da etiqueta' +
-          (IS_ADMIN ? ' ou cadastre em Novo Item.' : '.'), 'error');
+    toast(unknownCodeMessage(code, IS_ADMIN), 'error');
   }
 }
 
